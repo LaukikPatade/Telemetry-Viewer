@@ -1,0 +1,13 @@
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\bin\Debug\Telemetry_demo.exe.config
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\bin\Debug\Telemetry_demo.exe
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\bin\Debug\Telemetry_demo.pdb
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.csproj.AssemblyReference.cache
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.Telemetry.resources
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.Properties.Resources.resources
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.csproj.GenerateResource.cache
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.csproj.CoreCompileInputs.cache
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.exe
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.pdb
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.UserControl1.resources
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.UserControl2.resources
+C:\Users\LAUKIK PATADE\source\repos\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.UserControl3.resources
