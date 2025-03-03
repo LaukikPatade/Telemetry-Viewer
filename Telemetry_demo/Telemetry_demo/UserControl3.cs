@@ -23,10 +23,10 @@ namespace Telemetry_demo
             InitializeComponent();
         }
 
-        private void UserControl3_Load(object sender, EventArgs e)
+        /*private void UserControl3_Load(object sender, EventArgs e)
         {
 
-        }
+        }*/
 
 
         // Event handler for "Add Grid" button
@@ -90,8 +90,9 @@ namespace Telemetry_demo
         }
 
         // Method to handle adding a chart to a panel when the button is clicked
-        private void AddChartToPanel(Panel panel,String InputName)
+        /*private void AddChartToPanel(Panel panel,String InputName)
         {
+            Console.Write("HEREEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!");
             String ComPort = sharedInputs.Configurations[InputName].ComPort;
             int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
             ConnectToSerialPort(ComPort,BaudRate);
@@ -124,29 +125,106 @@ namespace Telemetry_demo
             // Force a layout update to ensure the chart is displayed
             //panel.ResumeLayout(true); // This forces the layout update
             //panel.PerformLayout();    // This ensures all the layout changes take effect
-        }
-        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        }*/
+
+        private void AddChartToPanel(Panel panel, string InputName)
         {
+            // Extract COM port and Baud rate from shared configurations
+            string ComPort = sharedInputs.Configurations[InputName].ComPort;
+            int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
+
+            // Create a new Chart control
+            Chart chart = new Chart
+            {
+                Dock = DockStyle.Fill
+            };
+
+            // Configure chart area
+            ChartArea chartArea = new ChartArea("MainArea");
+            chart.ChartAreas.Add(chartArea);
+
+            // Create a data series
+            Series series = new Series("Sensor Data")
+            {
+                ChartType = SeriesChartType.Line,
+                BorderWidth = 2
+            };
+            chart.Series.Add(series);
+
+            // Add chart to the panel
+            panel.Controls.Clear(); // Clear any existing controls
+            panel.Controls.Add(chart);
+
+            // Initialize and configure the SerialPort
+            SerialPort serialPort = new SerialPort(ComPort, BaudRate)
+            {
+                DtrEnable = true, // Ensure data is received properly
+                RtsEnable = true
+            };
+
             try
             {
-                string data = serialPort.ReadLine();  // Read incoming data
-                double sensorValue;
+                serialPort.Open();
 
-                // Parse the received data into a double value
-                if (double.TryParse(data, out sensorValue))
+                // Run data reading in a separate task
+                Task.Run(() =>
                 {
-                    // Invoke the method to update the chart on the UI thread
-                    panel.Invoke(new Action(() =>
+                    while (serialPort.IsOpen)
                     {
-                        AddDataPointToChart(sensorValue);
-                    }));
-                }
+                        try
+                        {
+                            string data = serialPort.ReadLine(); // Read incoming data
+
+                            if (double.TryParse(data, out double sensorValue))
+                            {
+                                // Update chart on UI thread
+                                panel.Invoke(new Action(() =>
+                                {
+                                    if (series.Points.Count > 100) // Keep chart efficient
+                                        series.Points.RemoveAt(0);
+
+                                    series.Points.AddY(sensorValue);
+                                }));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error reading from {ComPort}: {ex.Message}");
+                        }
+                    }
+                });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error reading data: {ex.Message}");
+                MessageBox.Show($"Failed to open {ComPort}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+        /* private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+         {
+             try
+             {
+                 string data = serialPort.ReadLine();  // Read incoming data
+                 double sensorValue;
+
+                 // Parse the received data into a double value
+                 if (double.TryParse(data, out sensorValue))
+                 {
+                     // Invoke the method to update the chart on the UI thread
+                     *//*panel.Invoke(new Action(() =>
+                     {
+                         AddDataPointToChart(sensorValue);
+                     }));*//*
+
+                     Console.WriteLine(sensorValue);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"Error reading data: {ex.Message}");
+             }
+         }*/
 
         // Add data points to the chart continuously
         private void AddDataPointToChart(double sensorValue)
@@ -211,7 +289,7 @@ namespace Telemetry_demo
 
             panel.Controls.Add(chart); // Add chart to panel
         }
-        public void ConnectToSerialPort(string comPort, int baudRate)
+        /*public void ConnectToSerialPort(string comPort, int baudRate)
         {
             serialPort = new SerialPort(comPort, baudRate);
             serialPort.DataReceived += SerialPort_DataReceived;
@@ -225,7 +303,40 @@ namespace Telemetry_demo
             {
                 MessageBox.Show($"Error connecting to serial port: {ex.Message}");
             }
-        }
+        }*/
+
+        // TO BE IMPLEMENTED
+
+        /*private void StartListening(string connectionName, Panel panel)
+        {
+
+            if(savedConnections.TryGetValue(connectionName, out SerialPort serialPort))
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        while (serialPort.IsOpen)
+                        {
+                            string data = serialPort.ReadLine();
+                            if(double.TryParse(data,out double sensorValue))
+                            {
+                                panel.Invoke(new Action(() =>
+                                {
+                                    AddDataPointToChart(panel, sensorValue);
+                                }));
+                            }
+
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Error in {connectionName}, {ex.Message}");
+                    }
+                });
+            }
+
+        }*/
 
   
        
