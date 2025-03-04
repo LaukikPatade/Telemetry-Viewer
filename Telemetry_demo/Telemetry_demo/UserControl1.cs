@@ -9,117 +9,96 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Xml.Serialization;
+
 
 namespace Telemetry_demo
 {
     public partial class UserControl1 : UserControl
     {
-        SerialPort serialPort= new SerialPort();
+        SerialPort serialPort = new SerialPort();
         private int sampleCount = 0;
         private List<InputConfig> configs = new List<InputConfig>();
         private ListBox lstConfiguredInputs;
+        private TextBox txtSyncByte;
+        private TextBox txtColumnNames;
+        private Label lblSyncByte;
+        private Label lblColumnNames;
+        private FlowLayoutPanel dynamicPanel;
+        private List<TextBox> columnTextBoxes = new List<TextBox>(); // Store column input boxes
+        private Button btnAddColumn; // Button to add columns
         public UserControl1()
         {
             InitializeComponent();
-            //InitializeChart();
             LoadCOMPorts();
             LoadBaudRates();
+            LoadModes();
             lstConfiguredInputs = new ListBox();
-            //if (comboBox1.SelectedItem != null)
-            //{
-            //    serialPort.PortName = comboBox1.SelectedItem.ToString();
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Please select a COM port.");
-            //    return; // Exit the constructor if no COM port is selected
-            //}
 
-            //// Use SelectedItem for baud rate as well
-            //if (comboBox2.SelectedItem != null)
-            //{
-            //    serialPort.BaudRate = int.Parse(comboBox2.SelectedItem.ToString());
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Please select a baud rate.");
-            //}
+            // Initialize dynamic panel
 
-            //serialPort.Open();
+            // Add the panel to an existing container (like the form or another panel)
+            
+
+            // Attach event handler for mode selection
+            /*ModeComboBox.SelectedIndexChanged += ModeComboBox_SelectedIndexChanged;*/
         }
-        //private void InitializeChart()
-        //{
-        //    // Configure the chart
-        //    chartUART.Series.Clear();
-        //    var series = new Series
-        //    {
-        //        Name = "Analog Values",
-        //        Color = System.Drawing.Color.Blue,
-        //        ChartType = SeriesChartType.Line,
-        //        BorderWidth = 2
-        //    };
-        //    chartUART.Series.Add(series);
-        //    chartUART.ChartAreas.Add(new ChartArea());
-        //    chartUART.ChartAreas[0].AxisX.Title = "Samples";
-        //    chartUART.ChartAreas[0].AxisY.Title = "Analog Value";
-        //}
-        private void btnUARTConnect_Click(object sender, EventArgs e)
-        {
 
+        private void BtnSaveConn_Click(object sender, EventArgs e)
+        {
             string comPort = "";
             int baudRate = 0;
-            if (comboBox1.SelectedItem != null)
+            string mode = "";
+            if (ComportBox.SelectedItem != null)
             {
-                comPort = comboBox1.SelectedItem.ToString();
+
+                comPort = ComportBox.SelectedItem.ToString();
+
             }
             else
             {
+
                 MessageBox.Show("Please select a COM port.");
                 return; // Exit the constructor if no COM port is selected
             }
 
             // Use SelectedItem for baud rate as well
-            if (comboBox2.SelectedItem != null)
+            if (BaudComboBox.SelectedItem != null)
             {
-                baudRate = int.Parse(comboBox2.SelectedItem.ToString());
+                baudRate = int.Parse(BaudComboBox.SelectedItem.ToString());
             }
             else
             {
                 MessageBox.Show("Please select a baud rate.");
             }
-            string inputName=tbInputName.Text;
+            string inputName = ConnName.Text;
             if (sharedInputs.Configurations.ContainsKey(inputName))
             {
                 MessageBox.Show("Input with that name already exists please select another inptut");
                 return;
             }
-            var inputConfig = new InputConfig(comPort, baudRate, inputName);
+            var inputConfig = new InputConfig(comPort, baudRate, mode, inputName);
             configs.Add(inputConfig);
             sharedInputs.AddConfiguration(inputConfig);
             configList.Items.Add($"{inputName}: {sharedInputs.Configurations[inputName].ComPort} - {baudRate}");
-            //ShowConfigurations();
-            //serialPort.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);
-            //serialPort.Open();
-            //btnUARTConnect.Enabled = false;
-
+            LoadDynamicPanel(inputConfig);
         }
-        private void LoadConfigs(InputConfig config)
+
+        
+        private void getInputStructure(InputConfig inputConfig)
         {
-            string comPort = (string)config.Config["com_port"];
-            int baudRate = (int)config.Config["baud_rate"];
-            string inputName = (string)config.Config["input_name"];
-
-            // Display or use the values as needed
+            
         }
+
         private void LoadCOMPorts()
         {
-            string[] ports =SerialPort.GetPortNames();
+            string[] ports = SerialPort.GetPortNames();
 
-            comboBox1.Items.Clear();
-            comboBox1.Items.AddRange(ports);
-            if (comboBox1.Items.Count > 0)
+            ComportBox.Items.Clear();
+            ComportBox.Items.AddRange(ports);
+            if (ComportBox.Items.Count > 0)
             {
-                comboBox1.SelectedIndex = 0;
+                ComportBox.SelectedIndex = 0;
             }
             else
             {
@@ -129,51 +108,121 @@ namespace Telemetry_demo
         }
         private void LoadBaudRates()
         {
+
             int[] baud = { 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600 };
 
-            comboBox2.Items.Clear();
-            //comboBox2.Items.AddRange(baud);
+            BaudComboBox.Items.Clear();
+
             foreach (int rate in baud)
             {
-                comboBox2.Items.Add(rate.ToString());
+                BaudComboBox.Items.Add(rate.ToString());
             }
-            comboBox2.SelectedIndex = 0;
 
+            BaudComboBox.SelectedIndex = 0;
         }
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void LoadModes()
         {
-            if (serialPort != null && serialPort.IsOpen)
+            string[] modes = { "CSV Mode", "Binary Mode" };
+
+            ModeComboBox.Items.Clear();
+
+            foreach (string mode in modes)
             {
-                serialPort.Close();
+                ModeComboBox.Items.Add(mode);
             }
-        }
-        private void ShowConfigurations()
-        {
-            lstConfiguredInputs.Items.Clear(); // Clear existing items
+            ModeComboBox.SelectedIndex = 0;
 
-            foreach (var config in configs)
+        }
+        private void LoadDynamicPanel(InputConfig inputConfig)
+        {
+            // Clear previous controls
+            Console.WriteLine("YIPEEE");
+            dynamicPanel = new FlowLayoutPanel
             {
-                lstConfiguredInputs.Items.Add(config); // Add each config to the ListBox
+                Dock = DockStyle.Bottom, // Ensures it aligns correctly
+                AutoSize = true,      // Makes it resize dynamically
+                FlowDirection = FlowDirection.TopDown,
+                BorderStyle = BorderStyle.FixedSingle, // Optional: Makes it visible for debugging
+                Padding = new Padding(5)
+            };
+            this.Controls.Add(dynamicPanel);
+            dynamicPanel.Controls.Clear();
+            columnTextBoxes.Clear();
+
+            if (ModeComboBox.SelectedItem.ToString() == "CSV Mode")
+            {
+                lblColumnNames = new Label { Text = "Enter Column Names (comma-separated):" };
+                dynamicPanel.Controls.Add(lblColumnNames);
+
+                AddColumnTextBox();
+                btnAddColumn = new Button
+                {
+                    Text = "Add",
+                    AutoSize = true
+                };
+
+                btnAddColumn.Click += BtnAddColumn_Click;
+                dynamicPanel.Controls.Add(btnAddColumn);
             }
-        }
+            else if (ModeComboBox.SelectedItem.ToString() == "Binary Mode")
+            {
+                lblSyncByte = new Label { Text = "Enter Sync Byte (Hex format e.g. 0xFF):" };
+                txtSyncByte = new TextBox { Width = 100 };
 
-        private void configList_SelectedIndexChanged(object sender, EventArgs e)
+                dynamicPanel.Controls.Add(lblSyncByte);
+                dynamicPanel.Controls.Add(txtSyncByte);
+            }
+
+            // Refresh the UI to ensure changes appear
+            dynamicPanel.Refresh();
+            this.Refresh();
+        }
+        /*private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Clear previous controls
+            dynamicPanel.Controls.Clear();
+            columnTextBoxes.Clear();
 
+            if (ModeComboBox.SelectedItem.ToString() == "CSV Mode")
+            {
+                lblColumnNames = new Label { Text = "Enter Column Names (comma-separated):" };
+                dynamicPanel.Controls.Add(lblColumnNames);
+
+                AddColumnTextBox();
+                btnAddColumn=new Button 
+                { 
+                Text = "Add" ,
+                AutoSize=true
+                };
+     
+                btnAddColumn.Click += BtnAddColumn_Click;
+                dynamicPanel.Controls.Add(btnAddColumn);
+            }
+            else if (ModeComboBox.SelectedItem.ToString() == "Binary Mode")
+            {
+                lblSyncByte = new Label { Text = "Enter Sync Byte (Hex format e.g. 0xFF):" };
+                txtSyncByte = new TextBox { Width = 100 };
+
+                dynamicPanel.Controls.Add(lblSyncByte);
+                dynamicPanel.Controls.Add(txtSyncByte);
+            }
+
+            // Refresh the UI to ensure changes appear
+            dynamicPanel.Refresh();
+            this.Refresh();
+        }*/
+
+        private void AddColumnTextBox()
+        {
+            TextBox txtColumn = new TextBox { Width = 100 };
+            columnTextBoxes.Add(txtColumn);
+            dynamicPanel.Controls.Add(txtColumn);
         }
-        //private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    string data = serialPort.ReadLine();
-        //    if (int.TryParse(data, out int analogValue))
-        //    {
-        //        // Update the chart on the UI thread
-        //        this.Invoke(new Action(() =>
-        //        {
-        //            sampleCount++;
-        //            chartUART.Series["Analog Values"].Points.AddXY(sampleCount, analogValue);
-        //            chartUART.ChartAreas[0].RecalculateAxesScale();
-        //        }));
-        //    }
-        //}
+
+        private void BtnAddColumn_Click(object sender, EventArgs eventArgs)
+        {
+            AddColumnTextBox();
+            dynamicPanel.Refresh();
+        }
     }
 }

@@ -57,6 +57,7 @@
     <Compile Include="NavigationControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="inputStructure.cs" />
     <Compile Include="sharedInputs.cs" />
     <Compile Include="UserControl1.cs">
       <SubType>UserControl</SubType>
