@@ -8,18 +8,18 @@ namespace Telemetry_demo
 {
     internal class inputStructure
     {
-        public List <String> ColumnNames { get; set; }
+        public List <String> Channels { get; set; }
 
         public inputStructure()
         {
-            ColumnNames=new List<String>();
+            Channels=new List<String>();
         }
 
-        public void AddColumn(string columnName)
+        public void AddColumn(string channel)
         {
-            if (!string.IsNullOrWhiteSpace(columnName))
+            if (!string.IsNullOrWhiteSpace(channel))
             {
-                ColumnNames.Add(columnName);
+                Channels.Add(channel);
             }
         }
         

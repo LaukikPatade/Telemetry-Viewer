@@ -25,6 +25,7 @@ namespace Telemetry_demo
         private Label lblSyncByte;
         private Label lblColumnNames;
         private FlowLayoutPanel dynamicPanel;
+        private TableLayoutPanel tableLayoutPanel;
         private List<TextBox> columnTextBoxes = new List<TextBox>(); // Store column input boxes
         private Button btnAddColumn; // Button to add columns
         public UserControl1()
@@ -84,11 +85,6 @@ namespace Telemetry_demo
             LoadDynamicPanel(inputConfig);
         }
 
-        
-        private void getInputStructure(InputConfig inputConfig)
-        {
-            
-        }
 
         private void LoadCOMPorts()
         {
@@ -136,7 +132,6 @@ namespace Telemetry_demo
         private void LoadDynamicPanel(InputConfig inputConfig)
         {
             // Clear previous controls
-            Console.WriteLine("YIPEEE");
             dynamicPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Bottom, // Ensures it aligns correctly
@@ -147,6 +142,7 @@ namespace Telemetry_demo
             };
             this.Controls.Add(dynamicPanel);
             dynamicPanel.Controls.Clear();
+            InitializeTableLayoutPanel();
             columnTextBoxes.Clear();
 
             if (ModeComboBox.SelectedItem.ToString() == "CSV Mode")
@@ -154,10 +150,10 @@ namespace Telemetry_demo
                 lblColumnNames = new Label { Text = "Enter Column Names (comma-separated):" };
                 dynamicPanel.Controls.Add(lblColumnNames);
 
-                AddColumnTextBox();
+                /*AddColumnTextBox();*/
                 btnAddColumn = new Button
                 {
-                    Text = "Add",
+                    Text = "Add Channel",
                     AutoSize = true
                 };
 
@@ -172,7 +168,14 @@ namespace Telemetry_demo
                 dynamicPanel.Controls.Add(lblSyncByte);
                 dynamicPanel.Controls.Add(txtSyncByte);
             }
+            Button btnSaveChannels = new Button
+            {
+                Text="Save Channels",
+                AutoSize = true
+            };
+            btnSaveChannels.Click += (sender, e) => SaveChannelsToConfig(inputConfig.InputName);
 
+            dynamicPanel.Controls.Add(btnSaveChannels);
             // Refresh the UI to ensure changes appear
             dynamicPanel.Refresh();
             this.Refresh();
@@ -212,17 +215,69 @@ namespace Telemetry_demo
             this.Refresh();
         }*/
 
-        private void AddColumnTextBox()
-        {
-            TextBox txtColumn = new TextBox { Width = 100 };
-            columnTextBoxes.Add(txtColumn);
-            dynamicPanel.Controls.Add(txtColumn);
-        }
+        
 
         private void BtnAddColumn_Click(object sender, EventArgs eventArgs)
         {
-            AddColumnTextBox();
+            AddChannelRow();
             dynamicPanel.Refresh();
+        }
+
+        private void InitializeTableLayoutPanel()
+        {
+            tableLayoutPanel = new TableLayoutPanel
+            {
+                ColumnCount = 3,
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                CellBorderStyle=TableLayoutPanelCellBorderStyle.Single
+            };
+            dynamicPanel.Controls.Add(tableLayoutPanel);
+        }
+        private void AddChannelRow()
+        {
+            int rowIndex = tableLayoutPanel.RowCount;
+
+            Label lblChannel = new Label { Text = $"Channel {rowIndex + 1}", AutoSize = true };
+            TextBox nameChannel = new TextBox { Text = "Enter Channel Name", AutoSize = true };
+            Button btnRemove = new Button{Text = "X"};
+
+            /*btnRemove.Click += (s, e) => RemoveChannelRow(rowIndex);*/
+
+            // Add controls to the table panel
+            tableLayoutPanel.Controls.Add(lblChannel, 0, rowIndex);
+            tableLayoutPanel.Controls.Add(nameChannel, 1, rowIndex);
+            tableLayoutPanel.Controls.Add(btnRemove, 2, rowIndex);
+
+            // Increase the row count
+            tableLayoutPanel.RowCount++;
+        }
+        private void SaveChannelsToConfig(string inputName)
+        {
+            if(!sharedInputs.Configurations.ContainsKey(inputName))
+            {
+                MessageBox.Show("Error: No such input available");
+                return;
+            }
+
+            var config = sharedInputs.Configurations[inputName];
+            config.ChannelConfig.Channels.Clear();
+
+            for (int i=0; i < tableLayoutPanel.RowCount; i++)
+            {
+                Control textBox = tableLayoutPanel.GetControlFromPosition(1, i);
+                if (textBox is TextBox channelInput)
+                {
+                    string channelName = channelInput.Text;
+                    if(!string.IsNullOrEmpty(channelName))
+                    {
+                        config.ChannelConfig.Channels.Add(channelName);
+                    }
+                }
+
+            }
+            MessageBox.Show($"Channels saved for {inputName}");
+            Console.WriteLine(config.ChannelConfig.Channels.ToString());
         }
     }
 }

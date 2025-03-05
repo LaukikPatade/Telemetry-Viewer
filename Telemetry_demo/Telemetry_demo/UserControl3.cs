@@ -14,24 +14,15 @@ namespace Telemetry_demo
 {
     public partial class UserControl3 : UserControl
     {
-        private SerialPort serialPort;
-        private Chart chart;
-        private Panel panel;
+        /*private SerialPort serialPort;*/
         public UserControl3()
         {
 
             InitializeComponent();
         }
 
-        /*private void UserControl3_Load(object sender, EventArgs e)
-        {
-
-        }*/
-
-
         // Event handler for "Add Grid" button
-        // Event handler for "Add Grid" button
-        private void btnAddGrid_Click(object sender, EventArgs e)
+        private void BtnAddGrid_Click(object sender, EventArgs e)
         {
             int rows = Convert.ToInt32(txtRows.Text);
             int columns = Convert.ToInt32(txtColumns.Text);
@@ -89,50 +80,16 @@ namespace Telemetry_demo
             grid.BringToFront();
         }
 
-        // Method to handle adding a chart to a panel when the button is clicked
-        /*private void AddChartToPanel(Panel panel,String InputName)
-        {
-            Console.Write("HEREEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!");
-            String ComPort = sharedInputs.Configurations[InputName].ComPort;
-            int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
-            ConnectToSerialPort(ComPort,BaudRate);
-            // Clear the panel (removes the button)
-            panel.Controls.Clear();
-
-            // Create a new chart
-            Chart chart = new Chart
-            {
-                Dock = DockStyle.Fill
-            };
-
-            // Create a chart area and add it to the chart
-            ChartArea chartArea = new ChartArea();
-            chart.ChartAreas.Add(chartArea);
-
-            // Optionally, add some series or data to the chart
-            Series series = new Series
-            {
-                ChartType = SeriesChartType.Line
-            };
-            series.Points.AddXY(1, 10);
-            series.Points.AddXY(2, 20);
-            series.Points.AddXY(3, 15);
-            chart.Series.Add(series);
-
-            // Add the chart to the panel
-            panel.Controls.Add(chart);
-
-            // Force a layout update to ensure the chart is displayed
-            //panel.ResumeLayout(true); // This forces the layout update
-            //panel.PerformLayout();    // This ensures all the layout changes take effect
-        }*/
+        
 
         private void AddChartToPanel(Panel panel, string InputName)
         {
             // Extract COM port and Baud rate from shared configurations
+            Dictionary<string, Series> channelSeries = new Dictionary<string, Series>();
             string ComPort = sharedInputs.Configurations[InputName].ComPort;
             int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
-
+            /*int BaudRate = 1500000;*/
+            var channels = sharedInputs.Configurations[InputName].ChannelConfig.Channels;
             // Create a new Chart control
             Chart chart = new Chart
             {
@@ -144,12 +101,23 @@ namespace Telemetry_demo
             chart.ChartAreas.Add(chartArea);
 
             // Create a data series
-            Series series = new Series("Sensor Data")
+            channelSeries.Clear();
+            foreach(string channel in channels)
+            {
+                Series series = new Series(channel)
+                {
+                    ChartType = SeriesChartType.Line,
+                    BorderWidth = 2
+                };
+                channelSeries[channel] = series;
+                chart.Series.Add(series);
+            }
+            /*Series series = new Series("Sensor Data")
             {
                 ChartType = SeriesChartType.Line,
                 BorderWidth = 2
-            };
-            chart.Series.Add(series);
+            };*/
+            /*chart.Series.Add(series);*/
 
             // Add chart to the panel
             panel.Controls.Clear(); // Clear any existing controls
@@ -174,18 +142,19 @@ namespace Telemetry_demo
                         try
                         {
                             string data = serialPort.ReadLine(); // Read incoming data
+                            ProcessCSVData(data, channels, channelSeries,panel,chart);
 
-                            if (double.TryParse(data, out double sensorValue))
+                            /*if (double.TryParse(data, out double sensorValue))
                             {
                                 // Update chart on UI thread
-                                panel.Invoke(new Action(() =>
+                                *//*panel.Invoke(new Action(() =>
                                 {
                                     if (series.Points.Count > 100) // Keep chart efficient
                                         series.Points.RemoveAt(0);
 
                                     series.Points.AddY(sensorValue);
-                                }));
-                            }
+                                }));*//*
+                            }*/
                         }
                         catch (Exception ex)
                         {
@@ -201,50 +170,11 @@ namespace Telemetry_demo
         }
 
 
-        /* private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-         {
-             try
-             {
-                 string data = serialPort.ReadLine();  // Read incoming data
-                 double sensorValue;
 
-                 // Parse the received data into a double value
-                 if (double.TryParse(data, out sensorValue))
-                 {
-                     // Invoke the method to update the chart on the UI thread
-                     *//*panel.Invoke(new Action(() =>
-                     {
-                         AddDataPointToChart(sensorValue);
-                     }));*//*
 
-                     Console.WriteLine(sensorValue);
-                 }
-             }
-             catch (Exception ex)
-             {
-                 Console.WriteLine($"Error reading data: {ex.Message}");
-             }
-         }*/
-
-        // Add data points to the chart continuously
-        private void AddDataPointToChart(double sensorValue)
-        {
-            Series series = chart.Series["SensorData"];
-
-            // Add a new data point to the series
-            series.Points.AddY(sensorValue);
-
-            // Optionally, keep the chart to show only the latest N points for a "scrolling" effect
-            if (series.Points.Count > 100)
-            {
-                series.Points.RemoveAt(0);  // Remove oldest points to keep a consistent number of data points
-            }
-
-            chart.Invalidate(); // Redraw the chart
-        }
 
         // Close the serial port connection when done
-        public void DisconnectSerialPort()
+        public void DisconnectSerialPort(SerialPort serialPort)
         {
             if (serialPort != null && serialPort.IsOpen)
             {
@@ -253,94 +183,70 @@ namespace Telemetry_demo
             }
         }
 
-
-        //private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    string data = serialPort.ReadLine();
-        //    if (int.TryParse(data, out int analogValue))
-        //    {
-        //        // Update the chart on the UI thread
-        //        this.Invoke(new Action(() =>
-        //        {
-        //            sampleCount++;
-        //            chartUART.Series["Analog Values"].Points.AddXY(sampleCount, analogValue);
-        //            chartUART.ChartAreas[0].RecalculateAxesScale();
-        //        }));
-        //    }
-        //}
-        private void InitializeChart()
+        /*public void ProcessCSVData(string data, List<string> channels, Dictionary<string,Series> channelSeries,Panel panel)
         {
-            chart = new Chart();
-            chart.Dock = DockStyle.Fill;
+            string[] values = data.Split(',');
+            if (values.Length!=channels.Count) { return; }
 
-            ChartArea chartArea = new ChartArea();
-            chartArea.AxisX.Title = "Time (s)";
-            chartArea.AxisY.Title = "Sensor Data";
-            chart.ChartAreas.Add(chartArea);
-
-            Series series = new Series
+            panel.Invoke(new Action(() =>
             {
-                Name = "SensorData",
-                ChartType = SeriesChartType.Line,
-                XValueType = ChartValueType.Int32,
-                YValueType = ChartValueType.Double
-            };
-            chart.Series.Add(series);
-
-            panel.Controls.Add(chart); // Add chart to panel
-        }
-        /*public void ConnectToSerialPort(string comPort, int baudRate)
-        {
-            serialPort = new SerialPort(comPort, baudRate);
-            serialPort.DataReceived += SerialPort_DataReceived;
-
-            try
-            {
-                serialPort.Open();
-                MessageBox.Show("Serial port connected.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error connecting to serial port: {ex.Message}");
-            }
-        }*/
-
-        // TO BE IMPLEMENTED
-
-        /*private void StartListening(string connectionName, Panel panel)
-        {
-
-            if(savedConnections.TryGetValue(connectionName, out SerialPort serialPort))
-            {
-                Task.Run(() =>
+                for(int i = 0; i < channels.Count; i++)
                 {
-                    try
+                if (double.TryParse(values[i], out double parseValue))
                     {
-                        while (serialPort.IsOpen)
-                        {
-                            string data = serialPort.ReadLine();
-                            if(double.TryParse(data,out double sensorValue))
-                            {
-                                panel.Invoke(new Action(() =>
-                                {
-                                    AddDataPointToChart(panel, sensorValue);
-                                }));
-                            }
+                        string channel = channels[i];
+                        if (channelSeries[channel].Points.Count > 100) channelSeries[channel].Points.RemoveAt(0);
 
-                        }
+                        channelSeries[channel].Points.AddY(parseValue);
                     }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine($"Error in {connectionName}, {ex.Message}");
-                    }
-                });
-            }
-
+                }
+            }));
         }*/
+        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel,Chart chart)
+        {
+            string[] values = data.Split(','); // Split CSV values
+            if (values.Length != channels.Count) return; // Ensure data matches channel count
 
-  
-       
-        
+            panel.Invoke(new Action(() =>
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (double.TryParse(values[i], out double parsedValue))
+                    {
+                        string channel = channels[i];
+
+                        // Ensure only selected channels are plotted
+                        /*if (!channelCheckBoxes.ContainsKey(channel) || !channelCheckBoxes[channel].Checked)
+                            continue;*/
+
+                        Series series = channelSeries[channel];
+
+                        // Maintain a rolling window of 100 points
+                        if (series.Points.Count > 100)
+                        {
+                            series.Points.RemoveAt(0); // Remove oldest data
+                        }
+
+                        // Add new data point with incremented X-value
+                        double xValue = series.Points.Count > 0 ? series.Points.Last().XValue + 1 : 0;
+                        series.Points.AddXY(xValue, parsedValue);
+
+                        // Adjust X-axis to create a scrolling effect
+                        chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
+                        chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+                    }
+                }
+            }));
+        }
+
+
+
+
+
+
+
+
+
 
     }
 }

@@ -14,7 +14,7 @@ namespace Telemetry_demo
         public string InputMode { get; set; }
         public Dictionary<string, object> Config { get; set; }
 
-        public inputStructure InputStructure { get; set; }
+        public inputStructure ChannelConfig { get; set; }
         public string Mode { get; set; }
 
         public InputConfig(string comPort, int baudRate, string mode, string inputName)
@@ -23,14 +23,14 @@ namespace Telemetry_demo
             BaudRate = baudRate;
             ComPort = comPort;
             Mode= mode;
-            InputStructure = new inputStructure();
+            ChannelConfig = new inputStructure();
             Config = new Dictionary<string, object>
         {
             { "com_port", comPort },
             { "baud_rate", baudRate },
             { "input_name", inputName },
             { "mode", mode },
-            {"input_structure",InputStructure }
+            {"input_structure",ChannelConfig }
         };
         }
     }
