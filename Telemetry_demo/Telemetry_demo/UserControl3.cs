@@ -79,12 +79,22 @@ namespace Telemetry_demo
             this.Controls.Add(grid);
             grid.BringToFront();
         }
-
-        
-
+        private void ResetAxis(Chart chart)
+        {
+            var chartArea = chart.ChartAreas[0];
+            chartArea.AxisX.Minimum = double.NaN; // Reset to auto-scaling
+            chartArea.AxisX.Maximum = double.NaN;
+        }
+         
         private void AddChartToPanel(Panel panel, string InputName)
         {
-            // Extract COM port and Baud rate from shared configurations
+            //***************************************Declarations**********************************************//
+            Dictionary<string, CheckBox> channelCheckBoxes = new Dictionary<string, CheckBox>();
+            Dictionary<string, List<DataPoint>> allChannelData = new Dictionary<string, List<DataPoint>>();
+            Panel checkBoxPanel= new Panel();
+            double scrollOffset = 0;
+            bool isChartFrozen = false;
+            ToolTip toolTip = new ToolTip();
             Dictionary<string, Series> channelSeries = new Dictionary<string, Series>();
             string ComPort = sharedInputs.Configurations[InputName].ComPort;
             int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
@@ -93,11 +103,96 @@ namespace Telemetry_demo
             // Create a new Chart control
             Chart chart = new Chart
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Top
             };
-
-            // Configure chart area
             ChartArea chartArea = new ChartArea("MainArea");
+
+
+
+
+
+
+            //***************************************Mouse Events on the Charts**********************************************//
+            void Chart_MouseMove(object sender, MouseEventArgs e)
+            {
+                var chart_s = sender as Chart;
+                if (chart_s == null) return;
+
+                var result = chart_s.HitTest(e.X, e.Y);
+                if (result.ChartElementType == ChartElementType.DataPoint)
+                {
+                    DataPoint point = chart_s.Series[0].Points[result.PointIndex];
+                    toolTip.Show($"X: {point.XValue}, Y: {point.YValues[0]}", chart_s, e.X, e.Y - 15);
+                }
+                else
+                {
+                    toolTip.Hide(chart_s);
+                }
+
+            }
+
+            void Chart_MouseWheel(object sender, MouseEventArgs e)
+            {
+                var chart_s = sender as Chart;
+                if (chart_s == null) return;
+
+                var chartArea_s = chart_s.ChartAreas[0];
+
+                if (e.Delta > 0) // Scroll Up
+                {
+                    if (!isChartFrozen)
+                    {
+                        isChartFrozen = true; // Freeze when scrolling up
+                        scrollOffset = 0; // Reset scroll position
+                    }
+                    else
+                    {
+                        // Move the viewport left (older data)
+                        scrollOffset += 5; // Adjust this value for sensitivity
+                        chartArea_s.AxisX.Minimum -= 5;
+                        chartArea_s.AxisX.Maximum -= 5;
+                    }
+                }
+                else if (e.Delta < 0) // Scroll Down
+                {
+                    if (isChartFrozen)
+                    {
+                        // Move the viewport right (newer data)
+                        scrollOffset -= 5;
+                        chartArea_s.AxisX.Minimum += 5;
+                        chartArea_s.AxisX.Maximum += 5;
+
+                        // If we scroll back to real-time, unfreeze
+                        if (scrollOffset <= 0)
+                        {
+                            isChartFrozen = false;
+                            ResetAxis(chart_s);
+                        }
+                    }
+                    else
+                    {
+                        isChartFrozen = false; // Unfreeze when scrolling down
+                    }
+                }
+
+                chart_s.Refresh();
+            }
+
+
+            /*void CheckBox_CheckChanged(object sender,EventArgs e)
+            {
+                UpdateChart();
+            }*/
+
+
+
+            // Extract COM port and Baud rate from shared configurations
+            
+            chart.MouseWheel += Chart_MouseWheel;
+            chart.MouseMove += Chart_MouseMove;
+            chart.Focus();
+            // Configure chart area
+            
             chart.ChartAreas.Add(chartArea);
 
             // Create a data series
@@ -112,17 +207,19 @@ namespace Telemetry_demo
                 channelSeries[channel] = series;
                 chart.Series.Add(series);
             }
-            /*Series series = new Series("Sensor Data")
-            {
-                ChartType = SeriesChartType.Line,
-                BorderWidth = 2
-            };*/
-            /*chart.Series.Add(series);*/
+            
 
             // Add chart to the panel
             panel.Controls.Clear(); // Clear any existing controls
-            panel.Controls.Add(chart);
+            CreateCheckBoxes(checkBoxPanel, channels, channelCheckBoxes);
+            checkBoxPanel.Dock = DockStyle.Bottom; // Place below the chart
+            checkBoxPanel.Height = 60; // Adjust height as needed
 
+            // Add both chart and checkbox panel
+            panel.Controls.Clear();
+            panel.Controls.Add(checkBoxPanel); // Add checkboxes first
+            panel.Controls.Add(chart); // Then add chart (so it doesn't overlap checkboxes)
+            
             // Initialize and configure the SerialPort
             SerialPort serialPort = new SerialPort(ComPort, BaudRate)
             {
@@ -142,20 +239,7 @@ namespace Telemetry_demo
                         try
                         {
                             string data = serialPort.ReadLine(); // Read incoming data
-                            ProcessCSVData(data, channels, channelSeries,panel,chart);
-
-                            /*if (double.TryParse(data, out double sensorValue))
-                            {
-                                // Update chart on UI thread
-                                *//*panel.Invoke(new Action(() =>
-                                {
-                                    if (series.Points.Count > 100) // Keep chart efficient
-                                        series.Points.RemoveAt(0);
-
-                                    series.Points.AddY(sensorValue);
-                                }));*//*
-                            }*/
-                        }
+                            ProcessCSVData(data, channels, channelSeries,panel,chart,isChartFrozen,allChannelData,channelCheckBoxes);                  }
                         catch (Exception ex)
                         {
                             Console.WriteLine($"Error reading from {ComPort}: {ex.Message}");
@@ -171,7 +255,33 @@ namespace Telemetry_demo
 
 
 
+        private void CreateCheckBoxes(Panel checkBoxPanel,List<string> channels, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            checkBoxPanel.Controls.Clear();
+            channelCheckBoxes.Clear();
 
+            checkBoxPanel.AutoScroll = true; // Enable scrolling if there are many checkboxes
+            checkBoxPanel.Dock = DockStyle.Bottom; // Position the panel below the chart
+            checkBoxPanel.Height = 50; // Set a reasonable height
+
+            int yOffset = 5; // Vertical spacing
+
+            foreach (string channel in channels)
+            {
+                CheckBox checkBox = new CheckBox
+                {
+                    Text = channel,
+                    Tag = channel,
+                    AutoSize = true,
+                    Checked = true,
+                    Location = new Point(5, yOffset) // Position each checkbox
+                };
+                yOffset += 25; // Space out checkboxes vertically
+
+                channelCheckBoxes[channel] = checkBox;
+                checkBoxPanel.Controls.Add(checkBox);
+            }
+        }
 
         // Close the serial port connection when done
         public void DisconnectSerialPort(SerialPort serialPort)
@@ -183,29 +293,12 @@ namespace Telemetry_demo
             }
         }
 
-        /*public void ProcessCSVData(string data, List<string> channels, Dictionary<string,Series> channelSeries,Panel panel)
+
+        
+        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, List<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             string[] values = data.Split(',');
-            if (values.Length!=channels.Count) { return; }
-
-            panel.Invoke(new Action(() =>
-            {
-                for(int i = 0; i < channels.Count; i++)
-                {
-                if (double.TryParse(values[i], out double parseValue))
-                    {
-                        string channel = channels[i];
-                        if (channelSeries[channel].Points.Count > 100) channelSeries[channel].Points.RemoveAt(0);
-
-                        channelSeries[channel].Points.AddY(parseValue);
-                    }
-                }
-            }));
-        }*/
-        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel,Chart chart)
-        {
-            string[] values = data.Split(','); // Split CSV values
-            if (values.Length != channels.Count) return; // Ensure data matches channel count
+            if (values.Length != channels.Count) return;
 
             panel.Invoke(new Action(() =>
             {
@@ -215,25 +308,29 @@ namespace Telemetry_demo
                     {
                         string channel = channels[i];
 
-                        // Ensure only selected channels are plotted
-                        /*if (!channelCheckBoxes.ContainsKey(channel) || !channelCheckBoxes[channel].Checked)
-                            continue;*/
-
+                        if (!channelSeries.ContainsKey(channel)) continue;
                         Series series = channelSeries[channel];
 
-                        // Maintain a rolling window of 100 points
-                        if (series.Points.Count > 100)
-                        {
-                            series.Points.RemoveAt(0); // Remove oldest data
-                        }
+                        // Ensure only selected channels are plotted
+                        if (!channelCheckBoxes[channel].Checked) continue;
 
-                        // Add new data point with incremented X-value
                         double xValue = series.Points.Count > 0 ? series.Points.Last().XValue + 1 : 0;
-                        series.Points.AddXY(xValue, parsedValue);
 
-                        // Adjust X-axis to create a scrolling effect
-                        chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
-                        chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+                        // Store full data history for scrolling
+                        if (!allChannelData.ContainsKey(channel))
+                            allChannelData[channel] = new List<DataPoint>();
+
+                        allChannelData[channel].Add(new DataPoint(xValue, parsedValue));
+
+                        if (!isChartFrozen) // Only update real-time when NOT frozen
+                        {
+                            if (series.Points.Count > 100) series.Points.RemoveAt(0);
+                            series.Points.AddXY(xValue, parsedValue);
+
+                            // Auto-scroll X-axis unless frozen
+                            chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
+                            chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+                        }
                     }
                 }
             }));

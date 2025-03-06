@@ -8,13 +8,22 @@ void loop() {
     float Ax = (random(-100, 100)) / 100.0;
     float Ay = (random(-100, 100)) / 100.0;
     float Az = (random(-100, 100)) / 100.0;
+    float Gx = (random(-100, 100)) / 100.0;
+    float Gy = (random(-100, 100)) / 100.0;
+    float Gz = (random(-100, 100)) / 100.0;
 
     // Print values in CSV format
     Serial.print(Ax, 2);
     Serial.print(",");
     Serial.print(Ay, 2);
     Serial.print(",");
-    Serial.println(Az, 2); // Newline at end
+    Serial.print(Az, 2); 
+    Serial.print(",");
+    Serial.print(Gx, 2);
+    Serial.print(",");
+    Serial.print(Gy, 2);
+    Serial.print(",");
+    Serial.println(Gz, 2);// Newline at end
 
     delay(100); // Send new data every 100ms
 }
