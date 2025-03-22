@@ -28,5 +28,5 @@ void loop() {
     Serial.print(Ax, 2);
     Serial.print(",");
     Serial.println(Ay, 2);
-    delay(100); // Send new data every 100ms
+    delay(10); // Send new data every 100ms
 }

@@ -46,5 +46,30 @@
       ]
     },
     "Mode": ""
+  },
+  {
+    "InputName": "test3",
+    "BaudRate": 115200,
+    "ComPort": "COM9",
+    "InputMode": null,
+    "Config": {
+      "com_port": "COM9",
+      "baud_rate": 115200,
+      "input_name": "test3",
+      "mode": "",
+      "input_structure": {
+        "Channels": [
+          "Ax",
+          "Ay"
+        ]
+      }
+    },
+    "ChannelConfig": {
+      "Channels": [
+        "Ax",
+        "Ay"
+      ]
+    },
+    "Mode": ""
   }
 ]
