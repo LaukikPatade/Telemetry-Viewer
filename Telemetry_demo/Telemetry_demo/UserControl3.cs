@@ -9,12 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.IO;
+
 
 namespace Telemetry_demo
 {
     public partial class UserControl3 : UserControl
     {
         /*private SerialPort serialPort;*/
+        List<InputConfig> inputConfigs=ConfigManager.LoadConfigs();
+        private StreamWriter csvWriter;
+        string filePath = "test.csv";
+        
         public UserControl3()
         {
 
@@ -49,13 +55,16 @@ namespace Telemetry_demo
                 for (int col = 0; col < columns; col++)
                 {
                     // Create a panel for each cell
-                    Panel panel = new Panel();
-                    panel.Dock = DockStyle.Fill;
-                    panel.BorderStyle = BorderStyle.FixedSingle;
+                    Panel panel = new Panel
+                    {
+                        Dock = DockStyle.Fill,
+                        BorderStyle = BorderStyle.FixedSingle
+                };
+                    
 
                     // Create an "Add Chart" button
                     ComboBox inputSelect = new ComboBox();
-                    foreach (var config in sharedInputs.configs)
+                    foreach (var config in inputConfigs)
                     {
                         inputSelect.Items.Add(config.InputName);
                     }
@@ -96,10 +105,10 @@ namespace Telemetry_demo
             bool isChartFrozen = false;
             ToolTip toolTip = new ToolTip();
             Dictionary<string, Series> channelSeries = new Dictionary<string, Series>();
-            string ComPort = sharedInputs.Configurations[InputName].ComPort;
-            int BaudRate = sharedInputs.Configurations[InputName].BaudRate;
-            /*int BaudRate = 1500000;*/
-            var channels = sharedInputs.Configurations[InputName].ChannelConfig.Channels;
+            InputConfig config = ConfigManager.searchConfig(InputName);
+            string ComPort = config.ComPort;
+            int BaudRate = config.BaudRate;
+            var channels = config.ChannelConfig.Channels;
             // Create a new Chart control
             Chart chart = new Chart
             {
@@ -179,15 +188,12 @@ namespace Telemetry_demo
             }
 
 
-            /*void CheckBox_CheckChanged(object sender,EventArgs e)
-            {
-                UpdateChart();
-            }*/
+            
 
 
 
             // Extract COM port and Baud rate from shared configurations
-            
+
             chart.MouseWheel += Chart_MouseWheel;
             chart.MouseMove += Chart_MouseMove;
             chart.Focus();
@@ -212,13 +218,18 @@ namespace Telemetry_demo
             // Add chart to the panel
             panel.Controls.Clear(); // Clear any existing controls
             CreateCheckBoxes(checkBoxPanel, channels, channelCheckBoxes);
+            
+            foreach(CheckBox checkBox in channelCheckBoxes.Values)
+            {
+                checkBox.CheckedChanged += (s, evt) => chart.Refresh();
+            }
             checkBoxPanel.Dock = DockStyle.Bottom; // Place below the chart
             checkBoxPanel.Height = 60; // Adjust height as needed
 
+            
+
             // Add both chart and checkbox panel
-            panel.Controls.Clear();
-            panel.Controls.Add(checkBoxPanel); // Add checkboxes first
-            panel.Controls.Add(chart); // Then add chart (so it doesn't overlap checkboxes)
+            
             
             // Initialize and configure the SerialPort
             SerialPort serialPort = new SerialPort(ComPort, BaudRate)
@@ -226,7 +237,27 @@ namespace Telemetry_demo
                 DtrEnable = true, // Ensure data is received properly
                 RtsEnable = true
             };
+           
+            string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            csvWriter = new StreamWriter(filePath, true); // ✅ No 'new' modifier issue
 
+            csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz"); // CSV Header row
+            csvWriter.Flush();
+
+
+            Button DisconnectDevice = new Button
+            {
+                Text = "Disconnect",
+                AutoSize = true
+            };
+
+            // Attach event handler and pass parameters
+            DisconnectDevice.Click += (sender, e) => DisconnectDevice_Click(serialPort, csvWriter); panel.Controls.Clear(); 
+            panel.Controls.Add(DisconnectDevice);
+            panel.Controls.Add(checkBoxPanel); // Add checkboxes first
+            panel.Controls.Add(chart); // Then add chart (so it doesn't overlap checkboxes)
+            
+            MessageBox.Show("Connected and logging started!", "Success");
             try
             {
                 serialPort.Open();
@@ -239,7 +270,7 @@ namespace Telemetry_demo
                         try
                         {
                             string data = serialPort.ReadLine(); // Read incoming data
-                            ProcessCSVData(data, channels, channelSeries,panel,chart,isChartFrozen,allChannelData,channelCheckBoxes);                  }
+                            ProcessCSVData(data, channels, channelSeries,panel,chart,isChartFrozen,allChannelData,channelCheckBoxes,csvWriter);                  }
                         catch (Exception ex)
                         {
                             Console.WriteLine($"Error reading from {ComPort}: {ex.Message}");
@@ -260,7 +291,7 @@ namespace Telemetry_demo
             checkBoxPanel.Controls.Clear();
             channelCheckBoxes.Clear();
 
-            checkBoxPanel.AutoScroll = true; // Enable scrolling if there are many checkboxes
+            /*checkBoxPanel.AutoScroll = true;*/ // Enable scrolling if there are many checkboxes
             checkBoxPanel.Dock = DockStyle.Bottom; // Position the panel below the chart
             checkBoxPanel.Height = 50; // Set a reasonable height
 
@@ -295,8 +326,11 @@ namespace Telemetry_demo
 
 
         
-        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, List<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, List<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes,StreamWriter csvWriter)
         {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            csvWriter.WriteLine($"{timestamp},{data}");
+            csvWriter.Flush(); // Ensure immediate write
             string[] values = data.Split(',');
             if (values.Length != channels.Count) return;
 
@@ -335,15 +369,18 @@ namespace Telemetry_demo
                 }
             }));
         }
+        private void DisconnectDevice_Click(SerialPort port, StreamWriter writer)
+        {
+            if (port != null && port.IsOpen)
+            {
+                port.Close();
+                port.Dispose();
+            }
 
+            writer?.Close();
 
-
-
-
-
-
-
-
+            MessageBox.Show("Disconnected successfully!", "Info");
+        }
 
     }
 }

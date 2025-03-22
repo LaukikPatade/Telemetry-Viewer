@@ -24,3 +24,6 @@ C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Tel
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.csproj.CoreCompileInputs.cache
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.exe
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.pdb
+C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\bin\Debug\Newtonsoft.Json.dll
+C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\bin\Debug\Newtonsoft.Json.xml
+C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.csproj.CopyComplete

@@ -16,8 +16,6 @@ namespace Telemetry_demo
 {
     public partial class UserControl1 : UserControl
     {
-        SerialPort serialPort = new SerialPort();
-        private int sampleCount = 0;
         private List<InputConfig> configs = new List<InputConfig>();
         private ListBox lstConfiguredInputs;
         private TextBox txtSyncByte;
@@ -28,11 +26,13 @@ namespace Telemetry_demo
         private TableLayoutPanel tableLayoutPanel;
         private List<TextBox> columnTextBoxes = new List<TextBox>(); // Store column input boxes
         private Button btnAddColumn; // Button to add columns
+        private ConfigManager configManager;
         public UserControl1()
         {
             InitializeComponent();
             LoadCOMPorts();
             LoadBaudRates();
+            LoadSavedConfigs();
             LoadModes();
             lstConfiguredInputs = new ListBox();
 
@@ -81,10 +81,18 @@ namespace Telemetry_demo
             var inputConfig = new InputConfig(comPort, baudRate, mode, inputName);
             configs.Add(inputConfig);
             sharedInputs.AddConfiguration(inputConfig);
-            configList.Items.Add($"{inputName}: {sharedInputs.Configurations[inputName].ComPort} - {baudRate}");
+            /*configList.Items.Add($"{inputName}: {sharedInputs.Configurations[inputName].ComPort} - {baudRate}");*/
             LoadDynamicPanel(inputConfig);
         }
 
+        private void LoadSavedConfigs()
+        {
+            List<InputConfig> configs=ConfigManager.LoadConfigs();
+            foreach (InputConfig config in configs)
+            {
+                configList.Items.Add($"{config.InputName}: {config.ComPort} - {config.BaudRate}");
+            }
+        }
 
         private void LoadCOMPorts()
         {
@@ -180,40 +188,7 @@ namespace Telemetry_demo
             dynamicPanel.Refresh();
             this.Refresh();
         }
-        /*private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Clear previous controls
-            dynamicPanel.Controls.Clear();
-            columnTextBoxes.Clear();
 
-            if (ModeComboBox.SelectedItem.ToString() == "CSV Mode")
-            {
-                lblColumnNames = new Label { Text = "Enter Column Names (comma-separated):" };
-                dynamicPanel.Controls.Add(lblColumnNames);
-
-                AddColumnTextBox();
-                btnAddColumn=new Button 
-                { 
-                Text = "Add" ,
-                AutoSize=true
-                };
-     
-                btnAddColumn.Click += BtnAddColumn_Click;
-                dynamicPanel.Controls.Add(btnAddColumn);
-            }
-            else if (ModeComboBox.SelectedItem.ToString() == "Binary Mode")
-            {
-                lblSyncByte = new Label { Text = "Enter Sync Byte (Hex format e.g. 0xFF):" };
-                txtSyncByte = new TextBox { Width = 100 };
-
-                dynamicPanel.Controls.Add(lblSyncByte);
-                dynamicPanel.Controls.Add(txtSyncByte);
-            }
-
-            // Refresh the UI to ensure changes appear
-            dynamicPanel.Refresh();
-            this.Refresh();
-        }*/
 
         
 
@@ -242,7 +217,7 @@ namespace Telemetry_demo
             TextBox nameChannel = new TextBox { Text = "Enter Channel Name", AutoSize = true };
             Button btnRemove = new Button{Text = "X"};
 
-            /*btnRemove.Click += (s, e) => RemoveChannelRow(rowIndex);*/
+            btnRemove.Click += (s, e) => RemoveChannelRow(rowIndex);
 
             // Add controls to the table panel
             tableLayoutPanel.Controls.Add(lblChannel, 0, rowIndex);
@@ -251,6 +226,31 @@ namespace Telemetry_demo
 
             // Increase the row count
             tableLayoutPanel.RowCount++;
+        }
+        private void RemoveChannelRow(int rowIndex)
+        {
+            for(int i = 0; i<tableLayoutPanel.ColumnCount; i++)
+            {
+                Control control = tableLayoutPanel.GetControlFromPosition(i, rowIndex);
+                if(control!=null)
+                {
+                    tableLayoutPanel.Controls.Remove(control);
+                    control.Dispose();
+                }
+            }
+            for (int j = rowIndex + 1; j < tableLayoutPanel.RowCount; j++)
+            {
+                for(int i =0; i < tableLayoutPanel.ColumnCount; i++)
+                {
+                    Control control = tableLayoutPanel.GetControlFromPosition(j, i);
+                    if(control!=null)
+                    {
+                        tableLayoutPanel.SetRow(control, i-1);
+                    }
+                }
+            }
+
+            tableLayoutPanel.RowCount--;
         }
         private void SaveChannelsToConfig(string inputName)
         {
@@ -278,6 +278,7 @@ namespace Telemetry_demo
             }
             MessageBox.Show($"Channels saved for {inputName}");
             Console.WriteLine(config.ChannelConfig.Channels.ToString());
+            ConfigManager.SaveConfig(config);
         }
     }
 }

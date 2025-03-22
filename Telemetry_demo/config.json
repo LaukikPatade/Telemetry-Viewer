@@ -1,0 +1,50 @@
+[
+  {
+    "InputName": "test",
+    "BaudRate": 115200,
+    "ComPort": "COM8",
+    "InputMode": null,
+    "Config": {
+      "com_port": "COM8",
+      "baud_rate": 115200,
+      "input_name": "test",
+      "mode": "",
+      "input_structure": {
+        "Channels": [
+          "Ax",
+          "Ay"
+        ]
+      }
+    },
+    "ChannelConfig": {
+      "Channels": [
+        "Ax",
+        "Ay"
+      ]
+    },
+    "Mode": ""
+  },
+  {
+    "InputName": "test2",
+    "BaudRate": 9600,
+    "ComPort": "COM8",
+    "InputMode": null,
+    "Config": {
+      "com_port": "COM8",
+      "baud_rate": 9600,
+      "input_name": "test2",
+      "mode": "",
+      "input_structure": {
+        "Channels": [
+          "Ax"
+        ]
+      }
+    },
+    "ChannelConfig": {
+      "Channels": [
+        "Ax"
+      ]
+    },
+    "Mode": ""
+  }
+]
