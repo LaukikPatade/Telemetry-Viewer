@@ -71,5 +71,30 @@
       ]
     },
     "Mode": ""
+  },
+  {
+    "InputName": "test_laptop",
+    "BaudRate": 115200,
+    "ComPort": "COM5",
+    "InputMode": null,
+    "Config": {
+      "com_port": "COM5",
+      "baud_rate": 115200,
+      "input_name": "test_laptop",
+      "mode": "",
+      "input_structure": {
+        "Channels": [
+          "Ax",
+          "Ay"
+        ]
+      }
+    },
+    "ChannelConfig": {
+      "Channels": [
+        "Ax",
+        "Ay"
+      ]
+    },
+    "Mode": ""
   }
 ]
