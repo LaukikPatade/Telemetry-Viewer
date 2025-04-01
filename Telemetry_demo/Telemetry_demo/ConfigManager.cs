@@ -10,7 +10,7 @@ namespace Telemetry_demo
     internal class ConfigManager
     {
 
-        private static string configPath = "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\config.json";
+        private static string configPath = "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\config.json";
         public ConfigManager() { }
 
         public static void SaveConfig(InputConfig config)

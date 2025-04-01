@@ -20,7 +20,7 @@ namespace Telemetry_demo
         List<InputConfig> inputConfigs=ConfigManager.LoadConfigs();
         private StreamWriter csvWriter;
         string filePath = "test.csv";
-        
+        private int xCounter = 0;
         public UserControl3()
         {
 
@@ -238,7 +238,7 @@ namespace Telemetry_demo
                 RtsEnable = true
             };
            
-            string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            string filePath = $"E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
             csvWriter = new StreamWriter(filePath, true); // ✅ No 'new' modifier issue
 
             csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz"); // CSV Header row
@@ -333,7 +333,7 @@ namespace Telemetry_demo
             csvWriter.Flush(); // Ensure immediate write
             string[] values = data.Split(',');
             if (values.Length != channels.Count) return;
-
+            xCounter++;
             panel.Invoke(new Action(() =>
             {
                 for (int i = 0; i < values.Length; i++)
@@ -346,24 +346,38 @@ namespace Telemetry_demo
                         Series series = channelSeries[channel];
 
                         // Ensure only selected channels are plotted
-                        if (!channelCheckBoxes[channel].Checked) continue;
+                        if (!channelCheckBoxes[channel].Checked)
+                        {
+
+                            chart.Series[channel].Enabled = false;
+                        }
+                        else if (channelCheckBoxes[channel].Checked && !chart.Series[channel].Enabled)
+                        {
+                            chart.Series[channel].Enabled = true;
+                        }
 
                         double xValue = series.Points.Count > 0 ? series.Points.Last().XValue + 1 : 0;
-
+                        
+                        Console.WriteLine(xValue);
+                        Console.WriteLine(xValue);
                         // Store full data history for scrolling
                         if (!allChannelData.ContainsKey(channel))
                             allChannelData[channel] = new List<DataPoint>();
 
-                        allChannelData[channel].Add(new DataPoint(xValue, parsedValue));
+                        allChannelData[channel].Add(new DataPoint(xCounter, parsedValue));
 
                         if (!isChartFrozen) // Only update real-time when NOT frozen
                         {
                             if (series.Points.Count > 100) series.Points.RemoveAt(0);
-                            series.Points.AddXY(xValue, parsedValue);
+                            series.Points.AddXY(xCounter, parsedValue);
 
                             // Auto-scroll X-axis unless frozen
-                            chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
-                            chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+                           
+                                chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
+                                chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+
+                                
+                            
                         }
                     }
                 }
