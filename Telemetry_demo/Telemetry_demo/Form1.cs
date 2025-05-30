@@ -13,6 +13,9 @@ namespace Telemetry_demo
     public partial class Telemetry : Form
     {
         NavigationControl navigationControl;
+        private int sidebarExpandedWidth = 150;
+        private int sidebarCollapsedWidth = 40;
+        private bool sidebarCollapsed = false;
         public Telemetry()
         {
             InitializeComponent();
@@ -21,7 +24,7 @@ namespace Telemetry_demo
 
         public void InitializeNavigationControl()
         {
-            List<UserControl> userControls = new List<UserControl>() { new UserControl1(), new UserControl2(), new UserControl3()};
+            List<UserControl> userControls = new List<UserControl>() { new UserControl1(),new UserControl3()};
             navigationControl = new NavigationControl(userControls,panelMain);
             navigationControl.Display(0);
         }
@@ -61,6 +64,22 @@ namespace Telemetry_demo
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnCollapseSidebar_Click(object sender, EventArgs e)
+        {
+            if (!sidebarCollapsed)
+            {
+                panel1.Width = sidebarCollapsedWidth;
+                btnCollapseSidebar.Text = ">>";
+                sidebarCollapsed = true;
+            }
+            else
+            {
+                panel1.Width = sidebarExpandedWidth;
+                btnCollapseSidebar.Text = "☰";
+                sidebarCollapsed = false;
+            }
         }
     }
 }

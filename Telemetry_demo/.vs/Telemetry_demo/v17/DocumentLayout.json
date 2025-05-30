@@ -1,66 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\",
+  "WorkspaceRootPath": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|e:\\ncair\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\usercontrol3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|c:\\laukik\\telemetry\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|e:\\ncair\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\sharedinputs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\sharedinputs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\inputconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\inputconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol2.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol2.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\usercontrol1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\usercontrol1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\navigationcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\navigationcontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -70,183 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "UserControl2.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl2.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl2.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl2.cs",
-              "RelativeToolTip": "Telemetry_demo\\UserControl2.cs",
-              "ViewState": "AgIAAE0AAAAAAAAAAIA3wF8AAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T10:32:16.135Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserControl3.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl3.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl3.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl3.cs",
-              "RelativeToolTip": "Telemetry_demo\\UserControl3.cs",
-              "ViewState": "AgIAAFgBAAAAAAAAAAAuwF4BAAAAAAAAAAAAAA==",
+              "Title": "Plotting Page.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Plotting Page.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
+              "RelativeToolTip": "Telemetry_demo\\Plotting Page.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T10:45:37.373Z",
+              "WhenOpened": "2025-05-30T05:14:40.526Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ConfigManager.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\ConfigManager.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\ConfigManager.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\ConfigManager.cs",
-              "RelativeToolTip": "Telemetry_demo\\ConfigManager.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAAAwAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-23T12:22:58.405Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "UserControl2.Designer.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl2.Designer.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl2.Designer.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl2.Designer.cs",
-              "RelativeToolTip": "Telemetry_demo\\UserControl2.Designer.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwAUAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T10:32:23.985Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "InputConfig.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\InputConfig.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\InputConfig.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\InputConfig.cs",
-              "RelativeToolTip": "Telemetry_demo\\InputConfig.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABMAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T08:34:56.181Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "UserControl1.cs [Design]",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl1.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl1.cs",
-              "ToolTip": "C:\\Users\\LAUKIK PATADE\\source\\repos\\Telemetry_demo\\Telemetry_demo\\UserControl1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:37.125Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UserControl1.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl1.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl1.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl1.cs",
-              "RelativeToolTip": "Telemetry_demo\\UserControl1.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAYwGIAAABfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:37.595Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "sharedInputs.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\sharedInputs.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\sharedInputs.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\sharedInputs.cs",
-              "RelativeToolTip": "Telemetry_demo\\sharedInputs.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T09:26:45.423Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "UserControl1.Designer.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl1.Designer.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl1.Designer.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl1.Designer.cs",
-              "RelativeToolTip": "Telemetry_demo\\UserControl1.Designer.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAQwBkAAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:37.174Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "UserControl2.cs [Design]",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\UserControl2.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\UserControl2.cs",
-              "ToolTip": "C:\\Users\\LAUKIK PATADE\\source\\repos\\Telemetry_demo\\Telemetry_demo\\UserControl2.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T10:33:47.819Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\Form1.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.cs",
-              "RelativeToolTip": "Telemetry_demo\\Form1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T08:07:36.888Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\Form1.cs",
-              "ToolTip": "C:\\Users\\LAUKIK PATADE\\source\\repos\\Telemetry_demo\\Telemetry_demo\\Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:36.058Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\Form1.Designer.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.Designer.cs",
-              "RelativeToolTip": "Telemetry_demo\\Form1.Designer.cs",
+              "Title": "Input Page.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Input Page.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.cs",
+              "RelativeToolTip": "Telemetry_demo\\Input Page.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:36.201Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "NavigationControl.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\NavigationControl.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\NavigationControl.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\NavigationControl.cs",
-              "RelativeToolTip": "Telemetry_demo\\NavigationControl.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:36.544Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Program.cs",
-              "RelativeDocumentMoniker": "Telemetry_demo\\Program.cs",
-              "ToolTip": "E:\\NCAIR\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Program.cs",
-              "RelativeToolTip": "Telemetry_demo\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-08T07:13:36.622Z"
+              "WhenOpened": "2025-05-30T05:14:34.453Z"
             }
           ]
         }
