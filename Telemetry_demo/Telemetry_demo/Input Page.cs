@@ -39,6 +39,7 @@ namespace Telemetry_demo
             //udpThread = new Thread(StartUDP);
             //udpThread.IsBackground = true; // So it closes when the app closes
             //udpThread.Start();
+            btnSaveChannels.Click += (s, e) => SaveChannelsFromGrid();
         }
 
         
@@ -260,8 +261,9 @@ namespace Telemetry_demo
         // Button to add columns
         private void BtnAddColumn_Click(object sender, EventArgs eventArgs)
         {
-            AddChannelRow();
-            dynamicPanel.Refresh();
+            // Legacy: AddChannelRow();
+            // dynamicPanel.Refresh();
+            // No longer needed with DataGridView approach
         }
 
 
@@ -431,6 +433,39 @@ namespace Telemetry_demo
                 string message = Encoding.ASCII.GetString(data);
                 Console.WriteLine($"Received from {remoteEP}: {message}");
             }
+        }
+
+        private void panelChannelCard_Paint(object sender, PaintEventArgs e)
+        {
+            // Draw a subtle shadow on the right and bottom
+            Panel panel = sender as Panel;
+            if (panel != null)
+            {
+                using (SolidBrush shadowBrush = new SolidBrush(Color.FromArgb(40, 0, 0, 0)))
+                {
+                    // Right shadow
+                    e.Graphics.FillRectangle(shadowBrush, panel.Width - 8, 8, 8, panel.Height - 8);
+                    // Bottom shadow
+                    e.Graphics.FillRectangle(shadowBrush, 8, panel.Height - 8, panel.Width - 8, 8);
+                }
+            }
+        }
+
+        private void SaveChannelsFromGrid()
+        {
+            // Example: Save channel names/types from DataGridView to config
+            // You can adapt this to your actual config logic
+            List<string> channelNames = new List<string>();
+            foreach (DataGridViewRow row in dgvChannels.Rows)
+            {
+                if (row.IsNewRow) continue;
+                var nameCell = row.Cells["ChannelName"]?.Value;
+                if (nameCell != null && !string.IsNullOrWhiteSpace(nameCell.ToString()))
+                {
+                    channelNames.Add(nameCell.ToString());
+                }
+            }
+            MessageBox.Show($"Saved {channelNames.Count} channels.");
         }
     }
 }

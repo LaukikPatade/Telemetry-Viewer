@@ -24,6 +24,10 @@ namespace Telemetry_demo
         private StreamWriter csvWriter;
         string filePath = "test.csv";
         private int xCounter = 0;
+        private const int MaxBufferSize = 10000; // Maximum number of points to keep per channel
+        private const int VisibleWindowSize = 100; // Number of points visible at a time
+        private bool isLive = true; // <-- Add this as a field
+        private double currentWindowStart = 0; // Track the left edge of the visible window
         public UserControl3()
         {
 
@@ -105,24 +109,23 @@ namespace Telemetry_demo
             var channels = config.ChannelConfig.Channels;
             string Port = config.Port;
 
-
-
-
+            // Remove local declaration of isLive here
+            Button btnLiveToggle = null;
 
             //######################################## CHART UTILITIES ###########################################//
 
             //***************************************Declarations**********************************************//
             Dictionary<string, CheckBox> channelCheckBoxes = new Dictionary<string, CheckBox>();
-            Dictionary<string, List<DataPoint>> allChannelData = new Dictionary<string, List<DataPoint>>();
-            Panel checkBoxPanel= new Panel();
+            Dictionary<string, Queue<DataPoint>> allChannelData = new Dictionary<string, Queue<DataPoint>>(); // Use Queue for fixed-size buffer
+            Panel checkBoxPanel = new Panel();
             double scrollOffset = 0;
             bool isChartFrozen = false;
             ToolTip toolTip = new ToolTip();
             Dictionary<string, Series> channelSeries = new Dictionary<string, Series>();
             string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-            csvWriter = new StreamWriter(filePath, true); // ✅ No 'new' modifier issue
+            csvWriter = new StreamWriter(filePath, true);
 
-            csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz"); // CSV Header row
+            csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz");
             csvWriter.Flush();
 
 
@@ -169,46 +172,46 @@ namespace Telemetry_demo
             {
                 var chart_s = sender as Chart;
                 if (chart_s == null) return;
-
                 var chartArea_s = chart_s.ChartAreas[0];
-
-                if (e.Delta > 0) // Scroll Up
+                double minX = double.MaxValue;
+                double maxX = double.MinValue;
+                foreach (var series in chart_s.Series)
                 {
-                    if (!isChartFrozen)
+                    if (series.Points.Count > 0)
                     {
-                        isChartFrozen = true; // Freeze when scrolling up
-                        scrollOffset = 0; // Reset scroll position
-                    }
-                    else
-                    {
-                        // Move the viewport left (older data)
-                        scrollOffset += 5; // Adjust this value for sensitivity
-                        chartArea_s.AxisX.Minimum -= 5;
-                        chartArea_s.AxisX.Maximum -= 5;
+                        minX = Math.Min(minX, series.Points.First().XValue);
+                        maxX = Math.Max(maxX, series.Points.Last().XValue);
                     }
                 }
-                else if (e.Delta < 0) // Scroll Down
+                double windowSize = VisibleWindowSize;
+                if (e.Delta > 0) // Scroll Up (older data)
+                {
+                    if (isLive)
+                    {
+                        isLive = false;
+                        btnLiveToggle.Text = "Go Live";
+                    }
+                    isChartFrozen = true;
+                    // Move window left
+                    currentWindowStart -= 10; // Scroll step
+                    if (currentWindowStart < minX) currentWindowStart = minX;
+                }
+                else if (e.Delta < 0) // Scroll Down (newer data)
                 {
                     if (isChartFrozen)
                     {
-                        // Move the viewport right (newer data)
-                        scrollOffset -= 5;
-                        chartArea_s.AxisX.Minimum += 5;
-                        chartArea_s.AxisX.Maximum += 5;
-
-                        // If we scroll back to real-time, unfreeze
-                        if (scrollOffset <= 0)
-                        {
-                            isChartFrozen = false;
-                            ResetAxis(chart_s);
-                        }
-                    }
-                    else
-                    {
-                        isChartFrozen = false; // Unfreeze when scrolling down
+                        // Move window right
+                        currentWindowStart += 10; // Scroll step
+                        if (currentWindowStart > maxX - (windowSize - 1))
+                            currentWindowStart = Math.Max(minX, maxX - (windowSize - 1));
                     }
                 }
-
+                // Always update the window in paused mode
+                if (!isLive && minX != double.MaxValue && maxX != double.MinValue)
+                {
+                    chartArea_s.AxisX.Minimum = currentWindowStart;
+                    chartArea_s.AxisX.Maximum = currentWindowStart + windowSize - 1;
+                }
                 chart_s.Refresh();
             }
 
@@ -228,7 +231,7 @@ namespace Telemetry_demo
 
             // Create a data series
             channelSeries.Clear();
-            foreach(string channel in channels)
+            foreach (string channel in channels)
             {
                 Series series = new Series(channel)
                 {
@@ -237,11 +240,12 @@ namespace Telemetry_demo
                 };
                 channelSeries[channel] = series;
                 chart.Series.Add(series);
+                allChannelData[channel] = new Queue<DataPoint>(); // Initialize buffer
             }
             
 
             // Add chart to the panel
-            panel.Controls.Clear(); // Clear any existing controls
+            panel.Controls.Clear();
             CreateCheckBoxes(checkBoxPanel, channels, channelCheckBoxes);
             
             foreach(CheckBox checkBox in channelCheckBoxes.Values)
@@ -258,6 +262,34 @@ namespace Telemetry_demo
                 AutoSize = true
             };
 
+            // Add persistent toggle button
+            btnLiveToggle = new Button
+            {
+                Text = "Pause",
+                Dock = DockStyle.Top,
+                Height = 30,
+                BackColor = Color.FromArgb(0, 122, 204),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnLiveToggle.FlatAppearance.BorderSize = 0;
+            btnLiveToggle.Click += (s, e) =>
+            {
+                isLive = !isLive;
+                btnLiveToggle.Text = isLive ? "Pause" : "Go Live";
+                if (isLive)
+                {
+                    // Jump to latest data
+                    foreach (var series in channelSeries.Values)
+                    {
+                        if (series.Points.Count > 0)
+                        {
+                            chartArea.AxisX.Minimum = series.Points.First().XValue;
+                            chartArea.AxisX.Maximum = series.Points.Last().XValue;
+                        }
+                    }
+                }
+            };
 
             // Add both chart and checkbox panel
 
@@ -266,6 +298,7 @@ namespace Telemetry_demo
             panel.Controls.Clear();
             panel.Controls.Add(DisconnectDevice);
             panel.Controls.Add(checkBoxPanel); // Add checkboxes first
+            panel.Controls.Add(btnLiveToggle);
             panel.Controls.Add(chart); // Then add chart (so it doesn't overlap checkboxes)
             
             MessageBox.Show("Connected and logging started!", "Success");
@@ -417,66 +450,76 @@ namespace Telemetry_demo
 
 
         
-        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, List<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes,StreamWriter csvWriter)
+        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes, StreamWriter csvWriter)
         {
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             csvWriter.WriteLine($"{timestamp},{data}");
-            csvWriter.Flush(); // Ensure immediate write
+            csvWriter.Flush();
             string[] values = data.Split(',');
-            //Console.WriteLine("")
             if (values.Length != channels.Count)
             {
                 Console.WriteLine("Your data and input config(channel length) don't match");
                 return;
             }
             xCounter++;
-            Console.WriteLine("Before Panel Invoked");
             panel.Invoke(new Action(() =>
             {
-                Console.WriteLine("Panel Invoked");
                 for (int i = 0; i < values.Length; i++)
                 {
                     if (double.TryParse(values[i], out double parsedValue))
                     {
-                        Console.WriteLine(parsedValue);
                         string channel = channels[i];
-
                         if (!channelSeries.ContainsKey(channel)) continue;
                         Series series = channelSeries[channel];
-
                         // Ensure only selected channels are plotted
                         if (!channelCheckBoxes[channel].Checked)
                         {
-
                             chart.Series[channel].Enabled = false;
                         }
                         else if (channelCheckBoxes[channel].Checked && !chart.Series[channel].Enabled)
                         {
                             chart.Series[channel].Enabled = true;
                         }
-
                         double xValue = series.Points.Count > 0 ? series.Points.Last().XValue + 1 : 0;
-                        
-                        //Console.WriteLine(xValue);
-                        //Console.WriteLine(xValue);
-                        // Store full data history for scrolling
+                        // Store full data history for scrolling (fixed-size buffer)
                         if (!allChannelData.ContainsKey(channel))
-                            allChannelData[channel] = new List<DataPoint>();
-
-                        allChannelData[channel].Add(new DataPoint(xCounter, parsedValue));
-
-                        if (!isChartFrozen) // Only update real-time when NOT frozen
+                            allChannelData[channel] = new Queue<DataPoint>();
+                        var buffer = allChannelData[channel];
+                        buffer.Enqueue(new DataPoint(xCounter, parsedValue));
+                        while (buffer.Count > MaxBufferSize)
                         {
-                            if (series.Points.Count > 100) series.Points.RemoveAt(0);
-                            series.Points.AddXY(xCounter, parsedValue);
-
-                            // Auto-scroll X-axis unless frozen
-                           
-                                chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
-                                chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
-
-                                
-                            
+                            buffer.Dequeue(); // Remove oldest
+                        }
+                        // Update chart points from buffer
+                        series.Points.Clear();
+                        foreach (var pt in buffer)
+                        {
+                            series.Points.AddXY(pt.XValue, pt.YValues[0]);
+                        }
+                        // Auto-scroll X-axis unless paused
+                        if (isLive)
+                        {
+                            if (series.Points.Count > 0)
+                            {
+                                double latestX = series.Points.Last().XValue;
+                                double minX = Math.Max(series.Points.First().XValue, latestX - (VisibleWindowSize - 1));
+                                currentWindowStart = minX;
+                                chart.ChartAreas[0].AxisX.Minimum = currentWindowStart;
+                                chart.ChartAreas[0].AxisX.Maximum = latestX;
+                            }
+                        }
+                        else // Paused mode: always use currentWindowStart
+                        {
+                            if (series.Points.Count > 0)
+                            {
+                                double minX = series.Points.First().XValue;
+                                double maxX = series.Points.Last().XValue;
+                                // Clamp currentWindowStart to buffer
+                                if (currentWindowStart < minX) currentWindowStart = minX;
+                                if (currentWindowStart > maxX - (VisibleWindowSize - 1)) currentWindowStart = Math.Max(minX, maxX - (VisibleWindowSize - 1));
+                                chart.ChartAreas[0].AxisX.Minimum = currentWindowStart;
+                                chart.ChartAreas[0].AxisX.Maximum = currentWindowStart + VisibleWindowSize - 1;
+                            }
                         }
                     }
                 }

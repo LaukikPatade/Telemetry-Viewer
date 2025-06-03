@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|c:\\laukik\\telemetry\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|c:\\laukik\\telemetry\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,32 +18,33 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Plotting Page.cs",
               "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
               "RelativeDocumentMoniker": "Telemetry_demo\\Plotting Page.cs",
               "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
               "RelativeToolTip": "Telemetry_demo\\Plotting Page.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAALgBAAAAAAAAAAAYwBICAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-30T05:14:40.526Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Input Page.cs",
               "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.cs",
               "RelativeDocumentMoniker": "Telemetry_demo\\Input Page.cs",
               "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.cs",
               "RelativeToolTip": "Telemetry_demo\\Input Page.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAiwCkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T05:14:34.453Z"
+              "WhenOpened": "2025-05-30T05:14:34.453Z",
+              "EditorCaption": ""
             }
           ]
         }
