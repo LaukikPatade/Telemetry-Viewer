@@ -4,7 +4,7 @@
 const char* ssid     = "NCAIR IOT";        // 🔁 Replace with your WiFi SSID
 const char* password = "Asim@123Tewari";    // 🔁 Replace with your WiFi password
 
-const char* udpAddress = "192.168.0.112";  // 🔁 Replace with your PC's IP
+const char* udpAddress = "192.168.0.118";  // 🔁 Replace with your PC's IP
 const int udpPort = 8080;
 
 WiFiUDP udp;

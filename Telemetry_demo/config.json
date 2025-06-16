@@ -63,5 +63,31 @@
         "Az"
       ]
     }
+  },
+  {
+    "InputName": "TestUI",
+    "ConnectionType": "UART",
+    "BaudRate": 9600,
+    "Port": "COM4",
+    "InputMode": "CSV Mode",
+    "ChannelConfig": {
+      "Channels": [
+        "Ax",
+        "Ay"
+      ]
+    }
+  },
+  {
+    "InputName": "TESTUI2",
+    "ConnectionType": "UDP",
+    "BaudRate": 115200,
+    "Port": "8080",
+    "InputMode": "CSV Mode",
+    "ChannelConfig": {
+      "Channels": [
+        "Ax",
+        "Ay"
+      ]
+    }
   }
 ]

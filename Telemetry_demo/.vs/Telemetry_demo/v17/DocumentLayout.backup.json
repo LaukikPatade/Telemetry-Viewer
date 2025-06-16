@@ -3,12 +3,36 @@
   "WorkspaceRootPath": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|c:\\laukik\\telemetry\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\input page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|c:\\laukik\\telemetry\\telemetry-viewer\\telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\plotting page.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\input page.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\input page.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\telemetry_demo\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F2B8C4D-4573-48E3-8178-57789925A40F}|Telemetry_demo\\Telemetry_demo.csproj|solutionrelative:telemetry_demo\\configmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Settings Page.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Telemetry_demo\\Settings Page.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +42,79 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 7,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Form1.Designer.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.Designer.cs",
+              "RelativeToolTip": "Telemetry_demo\\Form1.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-16T07:12:05.847Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Settings Page.Designer.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Settings Page.Designer.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Settings Page.Designer.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Settings Page.Designer.cs",
+              "RelativeToolTip": "Telemetry_demo\\Settings Page.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-16T07:09:26.253Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Form1.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Form1.cs",
+              "RelativeToolTip": "Telemetry_demo\\Form1.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAmwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-16T06:55:07.607Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Plotting Page.cs [Design]",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Plotting Page.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs [Design]",
+              "RelativeToolTip": "Telemetry_demo\\Plotting Page.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-16T06:39:52.074Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Input Page.Designer.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.Designer.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\Input Page.Designer.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.Designer.cs",
+              "RelativeToolTip": "Telemetry_demo\\Input Page.Designer.cs",
+              "ViewState": "AgIAAM8AAAAAAAAAAAAhwOcAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T06:38:11.014Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ConfigManager.cs",
+              "DocumentMoniker": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\ConfigManager.cs",
+              "RelativeDocumentMoniker": "Telemetry_demo\\ConfigManager.cs",
+              "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\ConfigManager.cs",
+              "RelativeToolTip": "Telemetry_demo\\ConfigManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T07:20:44.722Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -28,10 +123,9 @@
               "RelativeDocumentMoniker": "Telemetry_demo\\Plotting Page.cs",
               "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Plotting Page.cs",
               "RelativeToolTip": "Telemetry_demo\\Plotting Page.cs",
-              "ViewState": "AgIAALgBAAAAAAAAAAAYwBICAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAQwIcCAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T05:14:40.526Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T05:14:40.526Z"
             },
             {
               "$type": "Document",
@@ -41,7 +135,7 @@
               "RelativeDocumentMoniker": "Telemetry_demo\\Input Page.cs",
               "ToolTip": "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\Telemetry_demo\\Input Page.cs",
               "RelativeToolTip": "Telemetry_demo\\Input Page.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAiwCkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-30T05:14:34.453Z",
               "EditorCaption": ""

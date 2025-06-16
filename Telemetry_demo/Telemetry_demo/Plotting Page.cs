@@ -13,414 +13,217 @@ using System.IO;
 using System.Net.Sockets;
 using System.Net;
 
-
 namespace Telemetry_demo
 {
+    /// <summary>
+    /// UserControl for displaying and managing telemetry data visualization
+    /// </summary>
     public partial class UserControl3 : UserControl
     {
-        /*private SerialPort serialPort;*/
-        
-        List<InputConfig> inputConfigs=ConfigManager.LoadConfigs();
+        #region Constants
+        private const int MaxBufferSize = 10000;    // Maximum number of points to keep per channel
+        private const int VisibleWindowSize = 100;  // Number of points visible at a time
+        private const int UpdateInterval = 100;     // Update chart every 100ms
+        private const string LogDirectory = "logs"; // Directory for log files
+        private const int CleanupInterval = 1000;   // Cleanup every 1 second
+        private const int GarbageCollectionThreshold = 5000; // Trigger GC after this many points
+        #endregion
+
+        #region Private Fields
+        private readonly List<InputConfig> inputConfigs;
         private StreamWriter csvWriter;
-        string filePath = "test.csv";
         private int xCounter = 0;
-        private const int MaxBufferSize = 10000; // Maximum number of points to keep per channel
-        private const int VisibleWindowSize = 100; // Number of points visible at a time
-        private bool isLive = true; // <-- Add this as a field
-        private double currentWindowStart = 0; // Track the left edge of the visible window
+        private System.Windows.Forms.Timer updateTimer;
+        private System.Windows.Forms.Timer cleanupTimer;
+        private bool isLive = true;
+        private double currentWindowStart = 0;
+        private DateTime lastUpdateTime = DateTime.Now;
+        private readonly Dictionary<string, StreamWriter> logWriters = new Dictionary<string, StreamWriter>();
+        private readonly object chartLock = new object();
+        private readonly Dictionary<string, List<DataPoint>> pendingUpdates = new Dictionary<string, List<DataPoint>>();
+        private int totalPointsProcessed = 0;
+        #endregion
+
+        #region Constructor
         public UserControl3()
         {
-
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+                inputConfigs = ConfigManager.LoadConfigs();
+                InitializeLogDirectory();
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to initialize Plotting Page", ex);
+            }
         }
+        #endregion
 
-        // Event handler for "Add Grid" button
+        #region Public Methods
+        /// <summary>
+        /// Creates a grid of panels for chart placement
+        /// </summary>
         private void BtnAddGrid_Click(object sender, EventArgs e)
         {
             int rows = Convert.ToInt32(txtRows.Text);
             int columns = Convert.ToInt32(txtColumns.Text);
 
-            TableLayoutPanel grid = new TableLayoutPanel
-            {
-                RowCount = rows,
-                ColumnCount = columns,
-                Dock = DockStyle.Fill
-            };
-
-            for (int i = 0; i < rows; i++)
-            {
-                grid.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rows));
-            }
-            for (int i = 0; i < columns; i++)
-            {
-                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columns));
-            }
-
-            // Add panels with buttons to simulate gridlines and add chart functionality
-            for (int row = 0; row < rows; row++)
-            {
-                for (int col = 0; col < columns; col++)
-                {
-                    // Create a panel for each cell
-                    Panel panel = new Panel
-                    {
-                        Dock = DockStyle.Fill,
-                        BorderStyle = BorderStyle.FixedSingle
-                };
-                    
-
-                    // Create an "Add Chart" button
-                    ComboBox inputSelect = new ComboBox();
-                    foreach (var config in inputConfigs)
-                    {
-                        inputSelect.Items.Add(config.InputName);
-                    }
-                    inputSelect.Dock=DockStyle.Left;
-                    Button addChartButton = new Button();
-                    addChartButton.Text = "Add Chart";
-                    addChartButton.Dock = DockStyle.Right;  // Place the button at the top of the panel
-
-                    // Subscribe to the click event of the button
-                    addChartButton.Click += (s, evt) => AddChartToPanel(panel,inputSelect.Text);
-
-                    // Add the button to the panel
-                    panel.Controls.Add(addChartButton);
-                    panel.Controls.Add(inputSelect);
-                    // Add the panel to the grid
-                    grid.Controls.Add(panel, col, row);
-                }
-            }
-
-            // Add the grid to the form
+            var grid = CreateGridLayout(rows, columns);
+            AddPanelsToGrid(grid, rows, columns);
             this.Controls.Add(grid);
             grid.BringToFront();
         }
-        private void ResetAxis(Chart chart)
+
+        /// <summary>
+        /// Disconnects the serial port and closes the CSV writer
+        /// </summary>
+        private void DisconnectDevice_Click(SerialPort port, StreamWriter writer)
         {
-            var chartArea = chart.ChartAreas[0];
-            chartArea.AxisX.Minimum = double.NaN; // Reset to auto-scaling
-            chartArea.AxisX.Maximum = double.NaN;
+            if (port?.IsOpen == true)
+            {
+                port.Close();
+                port.Dispose();
+            }
+
+            writer?.Close();
+            MessageBox.Show("Disconnected successfully!", "Info");
         }
-         
-        private void AddChartToPanel(Panel panel, string InputName)
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Creates a new chart and initializes its components
+        /// </summary>
+        private void AddChartToPanel(Panel panel, string inputName)
         {
-            InputConfig config = ConfigManager.searchConfig(InputName);
-            int BaudRate = config.BaudRate;
+            var config = ConfigManager.searchConfig(inputName);
             var channels = config.ChannelConfig.Channels;
-            string Port = config.Port;
 
-            // Remove local declaration of isLive here
-            Button btnLiveToggle = null;
+            // Initialize chart components
+            var chartComponents = InitializeChartComponents(config, channels);
+            var chart = chartComponents.chart;
+            var channelSeries = chartComponents.channelSeries;
+            var allChannelData = chartComponents.allChannelData;
+            var channelCheckBoxes = chartComponents.channelCheckBoxes;
 
-            //######################################## CHART UTILITIES ###########################################//
+            // Setup UI controls
+            SetupChartControls(panel, chart, channelCheckBoxes, config);
 
-            //***************************************Declarations**********************************************//
-            Dictionary<string, CheckBox> channelCheckBoxes = new Dictionary<string, CheckBox>();
-            Dictionary<string, Queue<DataPoint>> allChannelData = new Dictionary<string, Queue<DataPoint>>(); // Use Queue for fixed-size buffer
-            Panel checkBoxPanel = new Panel();
-            double scrollOffset = 0;
-            bool isChartFrozen = false;
-            ToolTip toolTip = new ToolTip();
-            Dictionary<string, Series> channelSeries = new Dictionary<string, Series>();
-            string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-            csvWriter = new StreamWriter(filePath, true);
+            // Start data collection
+            StartDataCollection(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes);
 
-            csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz");
-            csvWriter.Flush();
+            // Initialize update timer
+            InitializeUpdateTimer(chart, channelSeries, allChannelData, channelCheckBoxes);
+        }
 
-
-
-
-
-
-
-
-
-
-            // Create a new Chart control
-            Chart chart = new Chart
+        /// <summary>
+        /// Updates the chart with new data points
+        /// </summary>
+        private void UpdateChart(Chart chart, Dictionary<string, Series> channelSeries,
+            Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            if (chart.InvokeRequired)
             {
-                Dock = DockStyle.Top
-            };
-            ChartArea chartArea = new ChartArea("MainArea");
-
-
-
-
-
-
-            //***************************************Mouse Events on the Charts**********************************************//
-            void Chart_MouseMove(object sender, MouseEventArgs e)
-            {
-                var chart_s = sender as Chart;
-                if (chart_s == null) return;
-
-                var result = chart_s.HitTest(e.X, e.Y);
-                if (result.ChartElementType == ChartElementType.DataPoint)
+                try
                 {
-                    DataPoint point = chart_s.Series[0].Points[result.PointIndex];
-                    toolTip.Show($"X: {point.XValue}, Y: {point.YValues[0]}", chart_s, e.X, e.Y - 15);
+                    chart.Invoke(new Action(() => UpdateChart(chart, channelSeries, allChannelData, channelCheckBoxes)));
                 }
-                else
+                catch (Exception ex)
                 {
-                    toolTip.Hide(chart_s);
+                    HandleError("Failed to invoke chart update", ex);
                 }
-
+                return;
             }
 
-            void Chart_MouseWheel(object sender, MouseEventArgs e)
-            {
-                var chart_s = sender as Chart;
-                if (chart_s == null) return;
-                var chartArea_s = chart_s.ChartAreas[0];
-                double minX = double.MaxValue;
-                double maxX = double.MinValue;
-                foreach (var series in chart_s.Series)
-                {
-                    if (series.Points.Count > 0)
-                    {
-                        minX = Math.Min(minX, series.Points.First().XValue);
-                        maxX = Math.Max(maxX, series.Points.Last().XValue);
-                    }
-                }
-                double windowSize = VisibleWindowSize;
-                if (e.Delta > 0) // Scroll Up (older data)
-                {
-                    if (isLive)
-                    {
-                        isLive = false;
-                        btnLiveToggle.Text = "Go Live";
-                    }
-                    isChartFrozen = true;
-                    // Move window left
-                    currentWindowStart -= 10; // Scroll step
-                    if (currentWindowStart < minX) currentWindowStart = minX;
-                }
-                else if (e.Delta < 0) // Scroll Down (newer data)
-                {
-                    if (isChartFrozen)
-                    {
-                        // Move window right
-                        currentWindowStart += 10; // Scroll step
-                        if (currentWindowStart > maxX - (windowSize - 1))
-                            currentWindowStart = Math.Max(minX, maxX - (windowSize - 1));
-                    }
-                }
-                // Always update the window in paused mode
-                if (!isLive && minX != double.MaxValue && maxX != double.MinValue)
-                {
-                    chartArea_s.AxisX.Minimum = currentWindowStart;
-                    chartArea_s.AxisX.Maximum = currentWindowStart + windowSize - 1;
-                }
-                chart_s.Refresh();
-            }
-
-
-            
-
-
-
-            // Extract COM port and Baud rate from shared configurations
-
-            chart.MouseWheel += Chart_MouseWheel;
-            chart.MouseMove += Chart_MouseMove;
-            chart.Focus();
-            // Configure chart area
-            
-            chart.ChartAreas.Add(chartArea);
-
-            // Create a data series
-            channelSeries.Clear();
-            foreach (string channel in channels)
-            {
-                Series series = new Series(channel)
-                {
-                    ChartType = SeriesChartType.Line,
-                    BorderWidth = 2
-                };
-                channelSeries[channel] = series;
-                chart.Series.Add(series);
-                allChannelData[channel] = new Queue<DataPoint>(); // Initialize buffer
-            }
-            
-
-            // Add chart to the panel
-            panel.Controls.Clear();
-            CreateCheckBoxes(checkBoxPanel, channels, channelCheckBoxes);
-            
-            foreach(CheckBox checkBox in channelCheckBoxes.Values)
-            {
-                checkBox.CheckedChanged += (s, evt) => chart.Refresh();
-            }
-            checkBoxPanel.Dock = DockStyle.Bottom; // Place below the chart
-            checkBoxPanel.Height = Math.Min(channels.Count * 25 + 10, 150); // Limit height to 150px or less
-
-
-            Button DisconnectDevice = new Button
-            {
-                Text = "Disconnect",
-                AutoSize = true
-            };
-
-            // Add persistent toggle button
-            btnLiveToggle = new Button
-            {
-                Text = "Pause",
-                Dock = DockStyle.Top,
-                Height = 30,
-                BackColor = Color.FromArgb(0, 122, 204),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnLiveToggle.FlatAppearance.BorderSize = 0;
-            btnLiveToggle.Click += (s, e) =>
-            {
-                isLive = !isLive;
-                btnLiveToggle.Text = isLive ? "Pause" : "Go Live";
-                if (isLive)
-                {
-                    // Jump to latest data
-                    foreach (var series in channelSeries.Values)
-                    {
-                        if (series.Points.Count > 0)
-                        {
-                            chartArea.AxisX.Minimum = series.Points.First().XValue;
-                            chartArea.AxisX.Maximum = series.Points.Last().XValue;
-                        }
-                    }
-                }
-            };
-
-            // Add both chart and checkbox panel
-
-
-            // Initialize and configure the SerialPort
-            panel.Controls.Clear();
-            panel.Controls.Add(DisconnectDevice);
-            panel.Controls.Add(checkBoxPanel); // Add checkboxes first
-            panel.Controls.Add(btnLiveToggle);
-            panel.Controls.Add(chart); // Then add chart (so it doesn't overlap checkboxes)
-            
-            MessageBox.Show("Connected and logging started!", "Success");
             try
             {
-           
-                
-
-
-
-
-
-
-                // Attach event handler and pass parameters
-                
-
-                // Run data reading in a separate task
-                Task.Run(() =>
+                lock (chartLock)
                 {
-                if (config.ConnectionType == "UART")
-                    {
-                        SerialPort serialPort = new SerialPort(Port, BaudRate)
-                        {
-                            DtrEnable = true, // Ensure data is received properly
-                            RtsEnable = true
-                        };
-                        DisconnectDevice.Click += (sender, e) => DisconnectDevice_Click(serialPort, csvWriter); 
-                        serialPort.Open();
-                        while (serialPort.IsOpen)
-                        {
-                            try
-                            {
-                                string data = serialPort.ReadLine(); // Read incoming data
-                                ProcessCSVData(data, channels, channelSeries, panel, chart, isChartFrozen, allChannelData, channelCheckBoxes, csvWriter);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error reading from {Port}: {ex.Message}");
-                            }
-                        }
-                    }
-                    else if (config.ConnectionType == "UDP")
-                    {
-                            int udpPort = int.Parse(Port);
-                            UdpClient udpClient = new UdpClient();
-                            udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                            udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, udpPort));
-
-                            DisconnectDevice.Click += (sender, e) =>
-                            {
-                                udpClient.Close(); // Stop receiving
-                                panel.Controls.Clear();
-                            };
-
-                            Console.WriteLine($"Listening for UDP packets on port {udpPort}...");
-
-                            while (true)
-                            {
-                                try
-                                {
-                                    IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-                                    byte[] data = udpClient.Receive(ref remoteEP);
-                                    string message = Encoding.ASCII.GetString(data);
-                                    //Console.WriteLine(message);
-                                // Make sure this runs on the UI thread if it updates UI controls
-                                    ProcessCSVData(message, channels, channelSeries, panel, chart, isChartFrozen, allChannelData, channelCheckBoxes, csvWriter);
-                                //panel.Invoke((MethodInvoker)delegate
-                                //{
-                                //    ProcessCSVData(message, channels, channelSeries, panel, chart, isChartFrozen, allChannelData, channelCheckBoxes, csvWriter);
-                                //});
-                            }
-                                catch (ObjectDisposedException)
-                                {
-                                    // Thrown when udpClient is closed during Receive
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine($"UDP Receive error: {ex.Message}");
-                                }
-                            }
-                        }
-                    
-                    
-                });
+                    chart.SuspendLayout();
+                    UpdateChartSeries(chart, channelSeries, allChannelData, channelCheckBoxes);
+                    UpdateChartAxis(chart);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open {Port}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                HandleError("Failed to update chart", ex);
+            }
+            finally
+            {
+                try
+                {
+                    lock (chartLock)
+                    {
+                        chart.ResumeLayout();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HandleError("Failed to resume chart layout", ex);
+                }
             }
         }
 
+        /// <summary>
+        /// Processes incoming CSV data and updates the data buffers
+        /// </summary>
+        private void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, Queue<DataPoint>> allChannelData,
+            Dictionary<string, CheckBox> channelCheckBoxes, StreamWriter csvWriter)
+        {
+            Console.WriteLine($"Received data: {data}");
+            try
+            {
+                if (string.IsNullOrWhiteSpace(data))
+                {
+                    Console.WriteLine("Received empty data");
+                    LogWarning("Received empty data");
+                    return;
+                }
 
+                string[] values = data.Split(',');
+                if (values.Length != channels.Count)
+                {
+                    Console.WriteLine($"Invalid data format. Expected {channels.Count} values, got {values.Length}");
+                    LogWarning($"Invalid data format. Expected {channels.Count} values, got {values.Length}");
+                    return;
+                }
+                
+                double timestamp = xCounter++;
+                Console.WriteLine($"Processing data: {data} at timestamp {timestamp}");
+                ProcessChannelData(values, channels, timestamp, allChannelData);
+                WriteToCSV(values, csvWriter);
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to process CSV data", ex);
+            }
+        }
 
+        /// <summary>
+        /// Creates checkboxes for channel selection
+        /// </summary>
         private void CreateCheckBoxes(Panel checkBoxPanel, List<string> channels, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             checkBoxPanel.Controls.Clear();
             channelCheckBoxes.Clear();
             checkBoxPanel.Dock = DockStyle.Bottom;
-            checkBoxPanel.Height = Math.Min(channels.Count * 25 + 10, 150); // Limit height to 150px or less
+            checkBoxPanel.Height = Math.Min(channels.Count * 25 + 10, 150);
 
-            // Create a scrollable panel for checkboxes
-            Panel scrollPanel = new Panel
+            var scrollPanel = new Panel { Dock = DockStyle.Fill, AutoScroll = true };
+            var flowPanel = new FlowLayoutPanel
             {
-                Dock = DockStyle.Fill,
-                AutoScroll = true
-            };
-
-            // Create a flow layout panel inside the scroll panel for better checkbox organization
-            FlowLayoutPanel flowPanel = new FlowLayoutPanel
-            {
-                Dock = DockStyle.Top, // Important: Top, not Fill
+                Dock = DockStyle.Top,
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
                 AutoSize = true,
                 Padding = new Padding(5)
             };
 
-            // Add checkboxes to the flow panel
             foreach (string channel in channels)
             {
-                CheckBox checkBox = new CheckBox
+                var checkBox = new CheckBox
                 {
                     Text = channel,
                     Checked = true,
@@ -431,116 +234,487 @@ namespace Telemetry_demo
                 flowPanel.Controls.Add(checkBox);
             }
 
-            // Add the flow panel to the scroll panel
             scrollPanel.Controls.Add(flowPanel);
-
-            // Add the scroll panel to the main panel
             checkBoxPanel.Controls.Add(scrollPanel);
         }
+        #endregion
 
-        // Close the serial port connection when done
-        public void DisconnectSerialPort(SerialPort serialPort)
+        #region Helper Methods
+        private TableLayoutPanel CreateGridLayout(int rows, int columns)
         {
-            if (serialPort != null && serialPort.IsOpen)
+            var grid = new TableLayoutPanel
             {
-                serialPort.Close();
-                Console.WriteLine("Serial port disconnected.");
+                RowCount = rows,
+                ColumnCount = columns,
+                Dock = DockStyle.Fill
+            };
+
+            for (int i = 0; i < rows; i++)
+                grid.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rows));
+            for (int i = 0; i < columns; i++)
+                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columns));
+
+            return grid;
+        }
+
+        private void AddPanelsToGrid(TableLayoutPanel grid, int rows, int columns)
+        {
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < columns; col++)
+                {
+                    var panel = new Panel
+                    {
+                        Dock = DockStyle.Fill,
+                        BorderStyle = BorderStyle.FixedSingle
+                    };
+
+                    var inputSelect = new ComboBox { Dock = DockStyle.Left };
+                    foreach (var config in inputConfigs)
+                        inputSelect.Items.Add(config.InputName);
+
+                    var addChartButton = new Button
+                    {
+                        Text = "Add Chart",
+                        Dock = DockStyle.Right
+                    };
+                    addChartButton.Click += (s, evt) => AddChartToPanel(panel, inputSelect.Text);
+
+                    panel.Controls.Add(addChartButton);
+                    panel.Controls.Add(inputSelect);
+                    grid.Controls.Add(panel, col, row);
+                }
             }
         }
 
-
-        
-        public void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries, Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes, StreamWriter csvWriter)
+        private (Chart chart, Dictionary<string, Series> channelSeries, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes) 
+            InitializeChartComponents(InputConfig config, List<string> channels)
         {
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            csvWriter.WriteLine($"{timestamp},{data}");
-            csvWriter.Flush();
-            string[] values = data.Split(',');
-            if (values.Length != channels.Count)
+            var chart = new Chart { Dock = DockStyle.Top };
+            var chartArea = new ChartArea("MainArea");
+            chart.ChartAreas.Add(chartArea);
+
+            var channelSeries = new Dictionary<string, Series>();
+            var allChannelData = new Dictionary<string, Queue<DataPoint>>();
+            var channelCheckBoxes = new Dictionary<string, CheckBox>();
+
+            foreach (string channel in channels)
             {
-                Console.WriteLine("Your data and input config(channel length) don't match");
-                return;
-            }
-            xCounter++;
-            panel.Invoke(new Action(() =>
-            {
-                for (int i = 0; i < values.Length; i++)
+                var series = new Series(channel)
                 {
-                    if (double.TryParse(values[i], out double parsedValue))
+                    ChartType = SeriesChartType.Line,
+                    BorderWidth = 2
+                };
+                channelSeries[channel] = series;
+                chart.Series.Add(series);
+                allChannelData[channel] = new Queue<DataPoint>();
+            }
+
+            return (chart, channelSeries, allChannelData, channelCheckBoxes);
+        }
+
+        private void SetupChartControls(Panel panel, Chart chart, Dictionary<string, CheckBox> channelCheckBoxes, InputConfig config)
+        {
+            var checkBoxPanel = new Panel();
+            CreateCheckBoxes(checkBoxPanel, config.ChannelConfig.Channels, channelCheckBoxes);
+
+            var disconnectButton = new Button { Text = "Disconnect", AutoSize = true };
+            var liveToggleButton = new Button
+            {
+                Text = "Pause",
+                Dock = DockStyle.Top,
+                Height = 30,
+                BackColor = Color.FromArgb(0, 122, 204),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+
+            liveToggleButton.Click += (s, e) => ToggleLiveMode(liveToggleButton, chart);
+
+            panel.Controls.Clear();
+            panel.Controls.Add(disconnectButton);
+            panel.Controls.Add(checkBoxPanel);
+            panel.Controls.Add(liveToggleButton);
+            panel.Controls.Add(chart);
+        }
+
+        private void StartDataCollection(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            csvWriter = new StreamWriter(filePath, true);
+            csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz");
+            csvWriter.Flush();
+            //Console.WriteLine($"CSV file created at {filePath}");
+            Task.Run(() => CollectData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes));
+        }
+
+        private void InitializeUpdateTimer(Chart chart, Dictionary<string, Series> channelSeries,
+            Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            try
+            {
+                // Initialize update timer
+                updateTimer = new System.Windows.Forms.Timer();
+                updateTimer.Interval = UpdateInterval;
+                updateTimer.Tick += (s, e) => UpdateChart(chart, channelSeries, allChannelData, channelCheckBoxes);
+                updateTimer.Start();
+
+                // Initialize cleanup timer
+                cleanupTimer = new System.Windows.Forms.Timer();
+                cleanupTimer.Interval = CleanupInterval;
+                cleanupTimer.Tick += (s, e) => PerformCleanup(chart, channelSeries, allChannelData);
+                cleanupTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to initialize timers", ex);
+            }
+        }
+
+        private void PerformCleanup(Chart chart, Dictionary<string, Series> channelSeries,
+            Dictionary<string, Queue<DataPoint>> allChannelData)
+        {
+            try
+            {
+                lock (chartLock)
+                {
+                    // Clean up old data points
+                    foreach (var channel in channelSeries.Keys)
                     {
-                        string channel = channels[i];
-                        if (!channelSeries.ContainsKey(channel)) continue;
-                        Series series = channelSeries[channel];
-                        // Ensure only selected channels are plotted
-                        if (!channelCheckBoxes[channel].Checked)
+                        var queue = allChannelData[channel];
+                        lock (queue)
                         {
-                            chart.Series[channel].Enabled = false;
-                        }
-                        else if (channelCheckBoxes[channel].Checked && !chart.Series[channel].Enabled)
-                        {
-                            chart.Series[channel].Enabled = true;
-                        }
-                        double xValue = series.Points.Count > 0 ? series.Points.Last().XValue + 1 : 0;
-                        // Store full data history for scrolling (fixed-size buffer)
-                        if (!allChannelData.ContainsKey(channel))
-                            allChannelData[channel] = new Queue<DataPoint>();
-                        var buffer = allChannelData[channel];
-                        buffer.Enqueue(new DataPoint(xCounter, parsedValue));
-                        while (buffer.Count > MaxBufferSize)
-                        {
-                            buffer.Dequeue(); // Remove oldest
-                        }
-                        // Update chart points from buffer
-                        series.Points.Clear();
-                        foreach (var pt in buffer)
-                        {
-                            series.Points.AddXY(pt.XValue, pt.YValues[0]);
-                        }
-                        // Auto-scroll X-axis unless paused
-                        if (isLive)
-                        {
-                            if (series.Points.Count > 0)
+                            while (queue.Count > MaxBufferSize)
                             {
-                                double latestX = series.Points.Last().XValue;
-                                double minX = Math.Max(series.Points.First().XValue, latestX - (VisibleWindowSize - 1));
-                                currentWindowStart = minX;
-                                chart.ChartAreas[0].AxisX.Minimum = currentWindowStart;
-                                chart.ChartAreas[0].AxisX.Maximum = latestX;
-                            }
-                        }
-                        else // Paused mode: always use currentWindowStart
-                        {
-                            if (series.Points.Count > 0)
-                            {
-                                double minX = series.Points.First().XValue;
-                                double maxX = series.Points.Last().XValue;
-                                // Clamp currentWindowStart to buffer
-                                if (currentWindowStart < minX) currentWindowStart = minX;
-                                if (currentWindowStart > maxX - (VisibleWindowSize - 1)) currentWindowStart = Math.Max(minX, maxX - (VisibleWindowSize - 1));
-                                chart.ChartAreas[0].AxisX.Minimum = currentWindowStart;
-                                chart.ChartAreas[0].AxisX.Maximum = currentWindowStart + VisibleWindowSize - 1;
+                                queue.Dequeue();
                             }
                         }
                     }
+
+                    // Force garbage collection if we've processed many points
+                    if (totalPointsProcessed > GarbageCollectionThreshold)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        totalPointsProcessed = 0;
+                    }
+
+                    // Clear any pending updates
+                    pendingUpdates.Clear();
                 }
-            }));
-        }
-        private void DisconnectDevice_Click(SerialPort port, StreamWriter writer)
-        {
-            if (port != null && port.IsOpen)
-            {
-                port.Close();
-                port.Dispose();
             }
-
-            writer?.Close();
-
-            MessageBox.Show("Disconnected successfully!", "Info");
+            catch (Exception ex)
+            {
+                HandleError("Failed to perform cleanup", ex);
+            }
         }
 
-        
+        private void UpdateChartSeries(Chart chart, Dictionary<string, Series> channelSeries,
+            Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            try
+            {
+                lock (chartLock)
+                {
+                    // Create a copy of the channels to avoid modification during enumeration
+                    var channels = channelSeries.Keys.ToList();
+                    
+                    foreach (var channel in channels)
+                    {
+                        if (!channelCheckBoxes[channel].Checked) continue;
 
+                        var series = channelSeries[channel];
+                        var dataQueue = allChannelData[channel];
+                        
+                        // Create a copy of the data points safely
+                        var points = new List<DataPoint>();
+                        lock (dataQueue)
+                        {
+                            // Only take the most recent points up to MaxBufferSize
+                            int count = Math.Min(dataQueue.Count, MaxBufferSize);
+                            points.AddRange(dataQueue.Skip(dataQueue.Count - count));
+                        }
+                        
+                        // Update series points
+                        series.Points.Clear();
+                        foreach (var point in points)
+                        {
+                            series.Points.AddXY(point.XValue, point.YValues[0]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to update chart series", ex);
+            }
+        }
 
+        private void UpdateChartAxis(Chart chart)
+        {
+            try
+            {
+                if (isLive && chart.Series.Count > 0 && chart.Series[0].Points.Count > 0)
+                {
+                    var chartArea = chart.ChartAreas[0];
+                    double maxX = chart.Series[0].Points.Last().XValue;
+                    chartArea.AxisX.Minimum = Math.Max(0, maxX - VisibleWindowSize);
+                    chartArea.AxisX.Maximum = maxX;
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to update chart axis", ex);
+            }
+        }
 
+        private void ProcessChannelData(string[] values, List<string> channels, double timestamp, Dictionary<string, Queue<DataPoint>> allChannelData)
+        {
+            Console.WriteLine("Processing channel data");
+            try
+            {
+                for (int i = 0; i < channels.Count; i++)
+                {
+                    string channel = channels[i];
+                    if (double.TryParse(values[i], out double value))
+                    {
+                        var dataPoint = new DataPoint(timestamp, value);
+                        var queue = allChannelData[channel];
+                        lock (queue)
+                        {
+                            queue.Enqueue(dataPoint);
+                            while (queue.Count > MaxBufferSize)
+                            {
+                                queue.Dequeue();
+                            }
+                        }
+                        totalPointsProcessed++;
+                    }
+                    else
+                    {
+                        LogWarning($"Failed to parse value '{values[i]}' for channel {channel}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to process channel data", ex);
+            }
+        }
+
+        private void WriteToCSV(string[] values, StreamWriter csvWriter)
+        {
+            try
+            {
+                if (csvWriter == null)
+                {
+                    LogWarning("CSV writer is null");
+                    return;
+                }
+
+                csvWriter.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff},{string.Join(",", values)}");
+                csvWriter.Flush();
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to write to CSV", ex);
+            }
+        }
+
+        private void ToggleLiveMode(Button btnLiveToggle, Chart chart)
+        {
+            isLive = !isLive;
+            btnLiveToggle.Text = isLive ? "Pause" : "Go Live";
+            if (isLive)
+            {
+                foreach (var series in chart.Series)
+                {
+                    if (series.Points.Count > 0)
+                    {
+                        chart.ChartAreas[0].AxisX.Minimum = series.Points.First().XValue;
+                        chart.ChartAreas[0].AxisX.Maximum = series.Points.Last().XValue;
+                    }
+                }
+            }
+        }
+
+        private void CollectData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            Console.WriteLine($"Starting data collection for {config.InputName} on {config.ConnectionType}...");
+            try
+            {
+                Console.WriteLine($"Using port: {config.Port}, Baud Rate: {config.BaudRate}, Mode: {config.InputMode}");
+                if (config.ConnectionType == "UART")
+                {
+                    CollectUARTData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes);
+                }
+                else if (config.ConnectionType == "UDP")
+                {
+                    Console.WriteLine($"Using UDP port: {config.Port}");
+                    CollectUDPData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unsupported connection type: {config.ConnectionType}");
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError($"Failed to collect data for {config.InputName}", ex);
+            }
+        }
+
+        private void CollectUARTData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            using (var serialPort = new SerialPort(config.Port, config.BaudRate) { DtrEnable = true, RtsEnable = true })
+            {
+                try
+                {
+                    serialPort.Open();
+                    while (serialPort.IsOpen)
+                    {
+                        try
+                        {
+                            string data = serialPort.ReadLine();
+                            Console.WriteLine($"Received data: {data}");
+                            ProcessCSVData(data, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                        }
+                        catch (TimeoutException)
+                        {
+                            // Ignore timeout exceptions as they're expected
+                            continue;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogWarning($"Error reading from {config.Port}: {ex.Message}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HandleError($"Failed to open serial port {config.Port}", ex);
+                }
+            }
+        }
+
+        private void CollectUDPData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
+        {
+            if (!int.TryParse(config.Port, out int udpPort))
+            {
+                throw new InvalidOperationException($"Invalid UDP port: {config.Port}");
+            }
+            Console.WriteLine($"Starting UDP listener on port {udpPort}...");
+            using (var udpClient = new UdpClient())
+            {
+                try
+                {
+                    udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                    udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, udpPort));
+
+                    LogInfo($"Listening for UDP packets on port {udpPort}...");
+
+                    while (true)
+                    {
+                        try
+                        {
+                            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+                            byte[] data = udpClient.Receive(ref remoteEP);
+                            string message = Encoding.ASCII.GetString(data);
+                            Console.WriteLine(message);
+                            ProcessCSVData(message, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogWarning($"UDP Receive error: {ex.Message}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HandleError($"Failed to initialize UDP client on port {udpPort}", ex);
+                }
+            }
+        }
+        #endregion
+
+        #region Initialization Methods
+        private void InitializeLogDirectory()
+        {
+            try
+            {
+                if (!Directory.Exists(LogDirectory))
+                {
+                    Directory.CreateDirectory(LogDirectory);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to initialize log directory", ex);
+            }
+        }
+        #endregion
+
+        #region Error Handling
+        private void HandleError(string message, Exception ex)
+        {
+            string errorMessage = $"{message}\nError: {ex.Message}";
+            if (ex.InnerException != null)
+            {
+                errorMessage += $"\nInner Error: {ex.InnerException.Message}";
+            }
+            MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LogError(errorMessage, ex);
+        }
+
+        private void LogError(string message, Exception ex)
+        {
+            try
+            {
+                string logPath = Path.Combine(LogDirectory, $"error_{DateTime.Now:yyyyMMdd}.log");
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ERROR: {message}\nStack Trace: {ex.StackTrace}\n\n";
+                File.AppendAllText(logPath, logMessage);
+            }
+            catch
+            {
+                // If logging fails, we can't do much about it
+            }
+        }
+
+        private void LogWarning(string message)
+        {
+            try
+            {
+                string logPath = Path.Combine(LogDirectory, $"warning_{DateTime.Now:yyyyMMdd}.log");
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] WARNING: {message}\n";
+                File.AppendAllText(logPath, logMessage);
+            }
+            catch
+            {
+                // If logging fails, we can't do much about it
+            }
+        }
+
+        private void LogInfo(string message)
+        {
+            try
+            {
+                string logPath = Path.Combine(LogDirectory, $"info_{DateTime.Now:yyyyMMdd}.log");
+                string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INFO: {message}\n";
+                File.AppendAllText(logPath, logMessage);
+            }
+            catch
+            {
+                // If logging fails, we can't do much about it
+            }
+        }
+        #endregion
     }
 }

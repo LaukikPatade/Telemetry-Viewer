@@ -51,7 +51,6 @@
             this.dgvChannels = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip();
             this.panelChannelCard = new System.Windows.Forms.Panel();
-            this.btnAddChannel = new System.Windows.Forms.Button();
             this.btnSaveChannels = new System.Windows.Forms.Button();
             this.mainTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.SuspendLayout();
@@ -226,7 +225,6 @@
             this.panelChannelCard.Padding = new System.Windows.Forms.Padding(15);
             this.panelChannelCard.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.panelChannelCard.Controls.Add(this.dgvChannels);
-            this.panelChannelCard.Controls.Add(this.btnAddChannel);
             this.panelChannelCard.Controls.Add(this.btnSaveChannels);
             this.panelChannelCard.Paint += new System.Windows.Forms.PaintEventHandler(this.panelChannelCard_Paint);
             // 
@@ -239,19 +237,14 @@
             this.dgvChannels.AllowUserToDeleteRows = true;
             this.dgvChannels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvChannels.Columns.Add("ChannelName", "Channel Name");
-            this.dgvChannels.Columns.Add("ChannelType", "Type");
+            var colorCol = new System.Windows.Forms.DataGridViewButtonColumn();
+            colorCol.Name = "ChannelColor";
+            colorCol.HeaderText = "Color";
+            colorCol.Text = "Pick Color";
+            colorCol.UseColumnTextForButtonValue = true;
+            this.dgvChannels.Columns.Add(colorCol);
             this.dgvChannels.Columns[0].Width = 200;
-            this.dgvChannels.Columns[1].Width = 120;
-            // 
-            // btnAddChannel
-            // 
-            this.btnAddChannel.Text = "Add Channel";
-            this.btnAddChannel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddChannel.BackColor = System.Drawing.Color.FromArgb(0, 122, 204);
-            this.btnAddChannel.ForeColor = System.Drawing.Color.White;
-            this.btnAddChannel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnAddChannel.Size = new System.Drawing.Size(120, 32);
-            this.btnAddChannel.Location = new System.Drawing.Point(15, 180);
+            this.dgvChannels.Columns[1].Width = 100;
             // 
             // btnSaveChannels
             // 
@@ -391,7 +384,6 @@
         private System.Windows.Forms.DataGridView dgvChannels;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Panel panelChannelCard;
-        private System.Windows.Forms.Button btnAddChannel;
         private System.Windows.Forms.Button btnSaveChannels;
     }
 }
