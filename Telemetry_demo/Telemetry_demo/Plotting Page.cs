@@ -12,6 +12,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace Telemetry_demo
 {
@@ -51,6 +52,7 @@ namespace Telemetry_demo
             {
                 InitializeComponent();
                 inputConfigs = ConfigManager.LoadConfigs();
+                Console.WriteLine($"Loaded {inputConfigs.Count} input configurations.");
                 InitializeLogDirectory();
             }
             catch (Exception ex)
@@ -88,6 +90,22 @@ namespace Telemetry_demo
 
             writer?.Close();
             MessageBox.Show("Disconnected successfully!", "Info");
+        }
+
+        public void LoadSavedConfigs()
+        {
+            try
+            {
+                ConfigManager.SetConfigPath();
+                inputConfigs.Clear();
+                inputConfigs.AddRange(ConfigManager.LoadConfigs());
+                Console.WriteLine($"Loaded {inputConfigs.Count} input configurations (reloaded). ");
+                // If you have a UI element to show configs, update it here.
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to load saved configurations", ex);
+            }
         }
         #endregion
 
@@ -168,7 +186,7 @@ namespace Telemetry_demo
         /// <summary>
         /// Processes incoming CSV data and updates the data buffers
         /// </summary>
-        private void ProcessCSVData(string data, List<string> channels, Dictionary<string, Series> channelSeries,
+        private void ProcessCSVData(string data, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
             Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, Queue<DataPoint>> allChannelData,
             Dictionary<string, CheckBox> channelCheckBoxes, StreamWriter csvWriter)
         {
@@ -202,9 +220,67 @@ namespace Telemetry_demo
         }
 
         /// <summary>
+        /// Processes incoming binary data and updates the data buffers
+        /// </summary>
+        private void ProcessBinaryData(byte[] data, InputConfig config, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
+            Panel panel, Chart chart, bool isChartFrozen, Dictionary<string, Queue<DataPoint>> allChannelData,
+            Dictionary<string, CheckBox> channelCheckBoxes, StreamWriter csvWriter)
+        {
+            try
+            {
+                if (data == null || data.Length == 0)
+                {
+                    LogWarning("Received empty binary data");
+                    return;
+                }
+
+                // Check for sync byte
+                if (config.SyncByte.HasValue && data[0] != config.SyncByte.Value)
+                {
+                    LogWarning($"Sync byte mismatch. Expected: 0x{config.SyncByte.Value:X2}, Got: 0x{data[0]:X2}");
+                    return;
+                }
+
+                // Calculate expected packet size: sync byte (1) + number of channels * sizeof(int16)
+                int expectedSize = 1 + (channels.Count * 2); // 2 bytes per int16_t
+                if (data.Length != expectedSize)
+                {
+                    LogWarning($"Invalid binary packet size. Expected: {expectedSize}, Got: {data.Length}");
+                    return;
+                }
+
+                // Parse int16 values starting after sync byte
+                string[] values = new string[channels.Count];
+                int dataIndex = 1; // Start after sync byte
+
+                for (int i = 0; i < channels.Count; i++)
+                {
+                    if (dataIndex + 2 <= data.Length)
+                    {
+                        short value = BitConverter.ToInt16(data, dataIndex);
+                        values[i] = value.ToString();
+                        dataIndex += 2;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                double timestamp = xCounter++;
+                ProcessChannelData(values, channels, timestamp, allChannelData);
+                WriteToCSV(values, csvWriter);
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to process binary data", ex);
+            }
+        }
+
+        /// <summary>
         /// Creates checkboxes for channel selection
         /// </summary>
-        private void CreateCheckBoxes(Panel checkBoxPanel, List<string> channels, Dictionary<string, CheckBox> channelCheckBoxes)
+        private void CreateCheckBoxes(Panel checkBoxPanel, List<ChannelInfo> channels, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             checkBoxPanel.Controls.Clear();
             channelCheckBoxes.Clear();
@@ -221,16 +297,16 @@ namespace Telemetry_demo
                 Padding = new Padding(5)
             };
 
-            foreach (string channel in channels)
+            foreach (var channel in channels)
             {
                 var checkBox = new CheckBox
                 {
-                    Text = channel,
+                    Text = channel.Name,
                     Checked = true,
                     AutoSize = true,
                     Margin = new Padding(3)
                 };
-                channelCheckBoxes[channel] = checkBox;
+                channelCheckBoxes[channel.Name] = checkBox;
                 flowPanel.Controls.Add(checkBox);
             }
 
@@ -288,7 +364,7 @@ namespace Telemetry_demo
         }
 
         private (Chart chart, Dictionary<string, Series> channelSeries, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes) 
-            InitializeChartComponents(InputConfig config, List<string> channels)
+            InitializeChartComponents(InputConfig config, List<ChannelInfo> channels)
         {
             var chart = new Chart { Dock = DockStyle.Top };
             var chartArea = new ChartArea("MainArea");
@@ -298,16 +374,16 @@ namespace Telemetry_demo
             var allChannelData = new Dictionary<string, Queue<DataPoint>>();
             var channelCheckBoxes = new Dictionary<string, CheckBox>();
 
-            foreach (string channel in channels)
+            foreach (var channel in channels)
             {
-                var series = new Series(channel)
+                var series = new Series(channel.Name)
                 {
                     ChartType = SeriesChartType.Line,
                     BorderWidth = 2
                 };
-                channelSeries[channel] = series;
+                channelSeries[channel.Name] = series;
                 chart.Series.Add(series);
-                allChannelData[channel] = new Queue<DataPoint>();
+                allChannelData[channel.Name] = new Queue<DataPoint>();
             }
 
             return (chart, channelSeries, allChannelData, channelCheckBoxes);
@@ -338,14 +414,17 @@ namespace Telemetry_demo
             panel.Controls.Add(chart);
         }
 
-        private void StartDataCollection(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+        private void StartDataCollection(InputConfig config, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
             Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
         {
-            string filePath = $"C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\test_logs\\{config.InputName}_log_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            string logFolder = GetLogFolderPath();
+            string filePath = Path.Combine(logFolder, $"telemetry_logs/{config.InputName}/log_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+            string directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
             csvWriter = new StreamWriter(filePath, true);
             csvWriter.WriteLine("Timestamp,Ax,Ay,Az,Gx,Gy,Gz");
             csvWriter.Flush();
-            //Console.WriteLine($"CSV file created at {filePath}");
             Task.Run(() => CollectData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes));
         }
 
@@ -469,14 +548,13 @@ namespace Telemetry_demo
             }
         }
 
-        private void ProcessChannelData(string[] values, List<string> channels, double timestamp, Dictionary<string, Queue<DataPoint>> allChannelData)
+        private void ProcessChannelData(string[] values, List<ChannelInfo> channels, double timestamp, Dictionary<string, Queue<DataPoint>> allChannelData)
         {
-            Console.WriteLine("Processing channel data");
             try
             {
                 for (int i = 0; i < channels.Count; i++)
                 {
-                    string channel = channels[i];
+                    string channel = channels[i].Name;
                     if (double.TryParse(values[i], out double value))
                     {
                         var dataPoint = new DataPoint(timestamp, value);
@@ -539,20 +617,20 @@ namespace Telemetry_demo
             }
         }
 
-        private void CollectData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+        private void CollectData(InputConfig config, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
             Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             Console.WriteLine($"Starting data collection for {config.InputName} on {config.ConnectionType}...");
             try
             {
-                Console.WriteLine($"Using port: {config.Port}, Baud Rate: {config.BaudRate}, Mode: {config.InputMode}");
+               
                 if (config.ConnectionType == "UART")
                 {
                     CollectUARTData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes);
                 }
                 else if (config.ConnectionType == "UDP")
                 {
-                    Console.WriteLine($"Using UDP port: {config.Port}");
+                    
                     CollectUDPData(config, channels, channelSeries, panel, chart, allChannelData, channelCheckBoxes);
                 }
                 else
@@ -566,21 +644,52 @@ namespace Telemetry_demo
             }
         }
 
-        private void CollectUARTData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+        private void CollectUARTData(InputConfig config, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
             Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             using (var serialPort = new SerialPort(config.Port, config.BaudRate) { DtrEnable = true, RtsEnable = true })
             {
+                Console.WriteLine($"Opening serial port {config.Port} at {config.BaudRate} baud...");
                 try
                 {
                     serialPort.Open();
+                    int frameSize = 1 + (channels.Count * 2); // 1 sync + N*2 bytes
+                    List<byte> buffer = new List<byte>();
+                    byte syncByte = config.SyncByte ?? 0xAA;
                     while (serialPort.IsOpen)
                     {
                         try
                         {
-                            string data = serialPort.ReadLine();
-                            Console.WriteLine($"Received data: {data}");
-                            ProcessCSVData(data, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                            int bytesToRead = serialPort.BytesToRead;
+                            if (bytesToRead > 0)
+                            {
+                                byte[] temp = new byte[bytesToRead];
+                                int read = serialPort.Read(temp, 0, bytesToRead);
+                                buffer.AddRange(temp.Take(read));
+                            }
+
+                            // Try to extract frames
+                            while (buffer.Count >= frameSize)
+                            {
+                                // Find sync byte
+                                int syncIndex = buffer.IndexOf(syncByte);
+                                if (syncIndex < 0)
+                                {
+                                    // No sync byte, discard all
+                                    buffer.Clear();
+                                    break;
+                                }
+                                if (buffer.Count - syncIndex < frameSize)
+                                {
+                                    // Not enough data for a full frame
+                                    break;
+                                }
+                                // Extract frame
+                                byte[] frame = buffer.Skip(syncIndex).Take(frameSize).ToArray();
+                                buffer.RemoveRange(0, syncIndex + frameSize);
+                                // Process frame
+                                ProcessBinaryData(frame, config, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                            }
                         }
                         catch (TimeoutException)
                         {
@@ -591,6 +700,7 @@ namespace Telemetry_demo
                         {
                             LogWarning($"Error reading from {config.Port}: {ex.Message}");
                         }
+                        System.Threading.Thread.Sleep(1); // Prevent tight loop
                     }
                 }
                 catch (Exception ex)
@@ -600,7 +710,7 @@ namespace Telemetry_demo
             }
         }
 
-        private void CollectUDPData(InputConfig config, List<string> channels, Dictionary<string, Series> channelSeries,
+        private void CollectUDPData(InputConfig config, List<ChannelInfo> channels, Dictionary<string, Series> channelSeries,
             Panel panel, Chart chart, Dictionary<string, Queue<DataPoint>> allChannelData, Dictionary<string, CheckBox> channelCheckBoxes)
         {
             if (!int.TryParse(config.Port, out int udpPort))
@@ -623,9 +733,20 @@ namespace Telemetry_demo
                         {
                             IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
                             byte[] data = udpClient.Receive(ref remoteEP);
-                            string message = Encoding.ASCII.GetString(data);
-                            Console.WriteLine(message);
-                            ProcessCSVData(message, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                            
+                            
+                            
+                            // Process data based on input mode
+                            if (config.InputMode == "Binary Mode")
+                            {
+                                ProcessBinaryData(data, config, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                            }
+                            else
+                            {
+                                // CSV Mode - convert bytes to string
+                                string message = Encoding.ASCII.GetString(data);
+                                ProcessCSVData(message, channels, channelSeries, panel, chart, false, allChannelData, channelCheckBoxes, csvWriter);
+                            }
                         }
                         catch (ObjectDisposedException)
                         {
@@ -642,6 +763,29 @@ namespace Telemetry_demo
                     HandleError($"Failed to initialize UDP client on port {udpPort}", ex);
                 }
             }
+        }
+
+        private string GetLogFolderPath()
+        {
+            try
+            {
+                string settingsPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "TelemetryViewer",
+                    "settings.json"
+                );
+                if (File.Exists(settingsPath))
+                {
+                    var json = File.ReadAllText(settingsPath);
+                    dynamic settings = JsonConvert.DeserializeObject(json);
+                    string logPath = settings?.logPath;
+                    if (!string.IsNullOrWhiteSpace(logPath))
+                        return logPath;
+                }
+            }
+            catch { }
+            // fallback to default if not set
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
         }
         #endregion
 
@@ -716,5 +860,15 @@ namespace Telemetry_demo
             }
         }
         #endregion
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (this.Visible)
+            {
+                Console.WriteLine("HURRAHHHHHHHHHHH");
+                LoadSavedConfigs();
+            }
+        }
     }
 }

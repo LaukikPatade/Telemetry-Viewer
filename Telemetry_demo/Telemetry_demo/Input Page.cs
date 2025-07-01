@@ -44,6 +44,8 @@ namespace Telemetry_demo
                 LoadInitialAssets();
                 InitializeControls();
                 SetupPanelEvents();
+                InitializeSyncByteControls();
+                //configManager.SetConfigPath();
             }
             catch (Exception ex)
             {
@@ -88,7 +90,9 @@ namespace Telemetry_demo
         {
             try
             {
+                ConfigManager.SetConfigPath();
                 List<InputConfig> configs = ConfigManager.LoadConfigs();
+                configList.Items.Clear();
                 foreach (InputConfig config in configs)
                 {
                     configList.Items.Add($"{config.InputName}: {config.Port} - {config.BaudRate}");
@@ -131,6 +135,21 @@ namespace Telemetry_demo
                 BaudComboBox.Items.Clear();
                 BaudComboBox.Items.AddRange(baud.Select(rate => rate.ToString()).ToArray());
                 BaudComboBox.SelectedIndex = 0;
+                
+                // Enable custom text input
+                BaudComboBox.DropDownStyle = ComboBoxStyle.DropDown;
+                
+                // Add tooltip to guide users
+                toolTip1.SetToolTip(BaudComboBox, "Select from common baud rates or enter a custom value (e.g., 150000)");
+                
+                // Add validation for numeric input only
+                BaudComboBox.KeyPress += (s, e) =>
+                {
+                    if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                    {
+                        e.Handled = true;
+                    }
+                };
             }
             catch (Exception ex)
             {
@@ -146,10 +165,38 @@ namespace Telemetry_demo
                 ModeComboBox.Items.Clear();
                 ModeComboBox.Items.AddRange(modes);
                 ModeComboBox.SelectedIndex = 0;
+                ModeComboBox.SelectedIndexChanged += ModeComboBox_SelectedIndexChanged;
             }
             catch (Exception ex)
             {
                 HandleError("Failed to load modes", ex);
+            }
+        }
+
+        private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string selectedMode = ModeComboBox.SelectedItem?.ToString() ?? "CSV Mode";
+                bool isBinaryMode = selectedMode == "Binary Mode";
+                
+                // Show/hide sync byte controls based on mode
+                SyncByteLabel.Visible = isBinaryMode;
+                SyncByteTextBox.Visible = isBinaryMode;
+                
+                // Adjust group box height if needed
+                if (isBinaryMode)
+                {
+                    groupBoxConnection.Height = 300; // Increase height for sync byte controls
+                }
+                else
+                {
+                    groupBoxConnection.Height = 260; // Default height
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to update mode UI", ex);
             }
         }
 
@@ -206,6 +253,48 @@ namespace Telemetry_demo
                 HandleError("Failed to paint panel", ex);
             }
         }
+
+        private void InitializeSyncByteControls()
+        {
+            try
+            {
+                // Initially hide sync byte controls
+                SyncByteLabel.Visible = false;
+                SyncByteTextBox.Visible = false;
+                
+                // Set default value and tooltip
+                SyncByteTextBox.Text = "0x00";
+                toolTip1.SetToolTip(SyncByteTextBox, "Enter sync byte in hexadecimal format (e.g., 0x00, 0xFF)");
+                
+                // Add validation for hex input
+                SyncByteTextBox.KeyPress += (s, e) =>
+                {
+                    if (!char.IsControl(e.KeyChar) && 
+                        !char.IsDigit(e.KeyChar) && 
+                        e.KeyChar != 'x' && 
+                        e.KeyChar != 'X' && 
+                        e.KeyChar != 'a' && 
+                        e.KeyChar != 'A' && 
+                        e.KeyChar != 'b' && 
+                        e.KeyChar != 'B' && 
+                        e.KeyChar != 'c' && 
+                        e.KeyChar != 'C' && 
+                        e.KeyChar != 'd' && 
+                        e.KeyChar != 'D' && 
+                        e.KeyChar != 'e' && 
+                        e.KeyChar != 'E' && 
+                        e.KeyChar != 'f' && 
+                        e.KeyChar != 'F')
+                    {
+                        e.Handled = true;
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                HandleError("Failed to initialize sync byte controls", ex);
+            }
+        }
         #endregion
 
         #region Event Handlers
@@ -258,9 +347,18 @@ namespace Telemetry_demo
                 return false;
             }
 
-            if (BaudComboBox.SelectedItem == null)
+            // Validate baud rate - can be from dropdown or custom input
+            string baudRateText = BaudComboBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(baudRateText))
             {
-                ShowWarning("Please select a baud rate.");
+                ShowWarning("Please enter or select a baud rate.");
+                return false;
+            }
+
+            // Validate that baud rate is a valid positive integer
+            if (!int.TryParse(baudRateText, out int baudRate) || baudRate <= 0)
+            {
+                ShowWarning("Please enter a valid positive baud rate number.");
                 return false;
             }
 
@@ -288,14 +386,53 @@ namespace Telemetry_demo
                 return false;
             }
 
+            // Validate sync byte for binary mode
+            string selectedMode = ModeComboBox.SelectedItem.ToString();
+            if (selectedMode == "Binary Mode")
+            {
+                if (string.IsNullOrWhiteSpace(SyncByteTextBox.Text))
+                {
+                    ShowWarning("Please enter a sync byte for binary mode.");
+                    return false;
+                }
+
+                // Validate hex format
+                if (!IsValidHexString(SyncByteTextBox.Text))
+                {
+                    ShowWarning("Please enter a valid hexadecimal sync byte (e.g., 0x00, 0xFF).");
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+        private bool IsValidHexString(string hexString)
+        {
+            try
+            {
+                // Remove 0x prefix if present
+                string cleanHex = hexString.Replace("0x", "").Replace("0X", "");
+                
+                // Check if it's a valid hex string
+                if (cleanHex.Length == 0 || cleanHex.Length > 2)
+                    return false;
+                
+                // Try to parse as hex
+                Convert.ToByte(cleanHex, 16);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private InputConfig CreateInputConfig()
         {
             string connType = ConnTypeComboBox.SelectedItem.ToString();
             string port = connType == "UART" ? ComportBox.SelectedItem.ToString() : UDPPortTextBox.Text;
-            int baudRate = int.Parse(BaudComboBox.SelectedItem.ToString());
+            int baudRate = int.Parse(BaudComboBox.Text.Trim());
             string inputMode = ModeComboBox.SelectedItem.ToString();
             string inputName = ConnName.Text;
 
@@ -305,7 +442,17 @@ namespace Telemetry_demo
                 return null;
             }
 
-            return new InputConfig(port, baudRate, inputMode, inputName, connType);
+            var config = new InputConfig(port, baudRate, inputMode, inputName, connType);
+            
+            // Add sync byte information for binary mode
+            if (inputMode == "Binary Mode" && !string.IsNullOrWhiteSpace(SyncByteTextBox.Text))
+            {
+                string syncByteHex = SyncByteTextBox.Text.Replace("0x", "").Replace("0X", "");
+                byte syncByte = Convert.ToByte(syncByteHex, 16);
+                config.SyncByte = syncByte;
+            }
+
+            return config;
         }
 
         private void SaveConfiguration(InputConfig inputConfig)
@@ -330,14 +477,15 @@ namespace Telemetry_demo
                 if (currentConfig == null)
                     return;
 
-                var channelNames = ExtractChannelNames();
-                if (channelNames.Count == 0)
+                var channelInfos = ExtractChannelInfos();
+                if (channelInfos == null || channelInfos.Count == 0)
                 {
                     ShowWarning("No valid channels found.");
                     return;
                 }
 
-                UpdateAndSaveConfig(currentConfig, channelNames);
+                UpdateAndSaveConfig(currentConfig, channelInfos);
+                LoadSavedConfigs();
             }
             catch (Exception ex)
             {
@@ -356,26 +504,40 @@ namespace Telemetry_demo
             return config;
         }
 
-        private List<string> ExtractChannelNames()
+        private List<ChannelInfo> ExtractChannelInfos()
         {
-            var channelNames = new List<string>();
-            foreach (DataGridViewRow row in dgvChannels.Rows)
+            try
             {
-                if (row.IsNewRow) continue;
-                var nameCell = row.Cells["ChannelName"]?.Value;
-                if (nameCell != null && !string.IsNullOrWhiteSpace(nameCell.ToString()))
+                var channelInfos = new List<ChannelInfo>();
+                foreach (DataGridViewRow row in dgvChannels.Rows)
                 {
-                    channelNames.Add(nameCell.ToString());
+                    if (row.IsNewRow) continue;
+                    var nameCell = row.Cells["ChannelName"]?.Value;
+                    var typeCell = row.Cells["ChannelType"]?.Value;
+                    if (nameCell != null && !string.IsNullOrWhiteSpace(nameCell.ToString()) &&
+                        typeCell != null && !string.IsNullOrWhiteSpace(typeCell.ToString()))
+                    {
+                        channelInfos.Add(new ChannelInfo
+                        {
+                            Name = nameCell.ToString(),
+                            Type = typeCell.ToString()
+                        });
+                    }
                 }
+                return channelInfos;
             }
-            return channelNames;
+            catch (Exception ex)
+            {
+                HandleError("Could not extract channel infos", ex);
+            }
+            return null;
         }
 
-        private void UpdateAndSaveConfig(InputConfig config, List<string> channelNames)
+        private void UpdateAndSaveConfig(InputConfig config, List<ChannelInfo> channelInfos)
         {
-            config.ChannelConfig = new inputStructure { Channels = channelNames };
+            config.ChannelConfig = new inputStructure { Channels = channelInfos };
             ConfigManager.SaveConfig(config);
-            ShowSuccess($"Saved {channelNames.Count} channels for {config.InputName}.");
+            ShowSuccess($"Saved {channelInfos.Count} channels for {config.InputName}.");
         }
 
         private void dgvChannels_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -542,5 +704,7 @@ namespace Telemetry_demo
             }
         }
         #endregion
+
+      
     }
 }

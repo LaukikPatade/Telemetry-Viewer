@@ -16,6 +16,9 @@ namespace Telemetry_demo
         private int sidebarExpandedWidth = 150;
         private int sidebarCollapsedWidth = 40;
         private bool sidebarCollapsed = false;
+        private UserControl1 inputPage;
+        private UserControl3 plottingPage;
+        private SettingsPage settingsPage;
         public Telemetry()
         {
             InitializeComponent();
@@ -24,8 +27,11 @@ namespace Telemetry_demo
 
         public void InitializeNavigationControl()
         {
-            List<UserControl> userControls = new List<UserControl>() { new UserControl1(),new UserControl3()};
-            navigationControl = new NavigationControl(userControls,panelMain);
+            inputPage = new UserControl1();
+            plottingPage = new UserControl3();
+            settingsPage = new SettingsPage();
+            List<UserControl> userControls = new List<UserControl>() { inputPage, plottingPage, settingsPage };
+            navigationControl = new NavigationControl(userControls, panelMain);
             navigationControl.Display(0);
         }
         
@@ -33,7 +39,7 @@ namespace Telemetry_demo
         private void btnWifi_Click(object sender, EventArgs e)
         {
             navigationControl.Display(1);
-            
+            plottingPage.LoadSavedConfigs();
         }
 
         private void btnUART_Click(object sender, EventArgs e)
@@ -41,15 +47,7 @@ namespace Telemetry_demo
             navigationControl.Display(0);
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            navigationControl.Display(2);
-        }
+        
 
         private void panelMain_Paint(object sender, PaintEventArgs e)
         {
@@ -70,6 +68,16 @@ namespace Telemetry_demo
                 btnCollapseSidebar.Text = "☰";
                 sidebarCollapsed = false;
             }
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            navigationControl.Display(2);
+        }
+
+        private void panelMain_Paint_1(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

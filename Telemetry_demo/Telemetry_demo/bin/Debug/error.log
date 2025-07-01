@@ -1,0 +1,143 @@
+[2025-06-20 13:48:34] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:48:56] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:49:15] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:49:46] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:50:12] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:50:18] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:53:15] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 489
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:54:37] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 491
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:56:18] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 492
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 13:57:04] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 492
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 14:38:33] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 492
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 14:40:20] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 493
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 14:40:29] Failed to save channels
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 493
+   at Telemetry_demo.UserControl1.SaveChannelsFromGrid(String configName) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 456
+
+[2025-06-20 14:45:29] Could not extract channel names
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 495
+
+[2025-06-20 14:48:07] Could not extract channel names
+Error: Column named Channel Name cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 495
+
+[2025-06-20 14:55:19] Could not extract channel names
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 495
+
+[2025-06-20 14:57:15] Could not extract channel names
+Error: Column named ChannelName cannot be found.
+Parameter name: columnName
+Stack Trace:    at System.Windows.Forms.DataGridViewCellCollection.get_Item(String columnName)
+   at Telemetry_demo.UserControl1.ExtractChannelNames() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 495
+
+[2025-06-30 14:19:28] Failed to load saved configurations
+Error: Error converting value "Ax" to type 'Telemetry_demo.ChannelInfo'. Path '[0].ChannelConfig.Channels[0]', line 11, position 12.
+Inner Error: Could not cast or convert from System.String to Telemetry_demo.ChannelInfo.
+Stack Trace:    at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.PopulateList(IList list, JsonReader reader, JsonArrayContract contract, JsonProperty containerProperty, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.SetPropertyValue(JsonProperty property, JsonConverter propertyConverter, JsonContainerContract containerContract, JsonProperty containerProperty, JsonReader reader, Object target)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.PopulateObject(Object newObject, JsonReader reader, JsonObjectContract contract, JsonProperty member, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.ResolvePropertyAndCreatorValues(JsonObjectContract contract, JsonProperty containerProperty, JsonReader reader, Type objectType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObjectUsingCreatorWithParameters(JsonReader reader, JsonObjectContract contract, JsonProperty containerProperty, ObjectConstructor`1 creator, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateNewObject(JsonReader reader, JsonObjectContract objectContract, JsonProperty containerMember, JsonProperty containerProperty, String id, Boolean& createdFromNonDefaultCreator)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.PopulateList(IList list, JsonReader reader, JsonArrayContract contract, JsonProperty containerProperty, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at Telemetry_demo.ConfigManager.LoadConfigs() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\ConfigManager.cs:line 65
+   at Telemetry_demo.UserControl1.LoadSavedConfigs() in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Input Page.cs:line 94
+

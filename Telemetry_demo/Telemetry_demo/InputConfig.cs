@@ -13,6 +13,7 @@ namespace Telemetry_demo
         public int BaudRate { get; set; }
         public string Port { get; set; }
         public string InputMode { get; set; }
+        public byte? SyncByte { get; set; } // Nullable byte for sync byte (only used in binary mode)
 
         public inputStructure ChannelConfig { get; set; }
 
@@ -24,6 +25,7 @@ namespace Telemetry_demo
             BaudRate = baudRate;
             Port = port;
             InputMode = inputMode;
+            SyncByte = null; // Default to null
             ChannelConfig = new inputStructure();
         }
     }

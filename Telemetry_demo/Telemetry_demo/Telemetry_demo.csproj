@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -77,6 +78,12 @@
     <Compile Include="Plotting Page.Designer.cs">
       <DependentUpon>Plotting Page.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings Page.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings Page.Designer.cs">
+      <DependentUpon>Settings Page.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,6 +102,9 @@
     <EmbeddedResource Include="Plotting Page.resx">
       <DependentUpon>Plotting Page.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Settings Page.resx">
+      <DependentUpon>Settings Page.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -109,5 +119,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <Target Name="CopyDependencies" AfterTargets="Build">
+    <Copy SourceFiles="$(ProjectDir)..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll" 
+          DestinationFolder="$(OutputPath)" 
+          Condition="Exists('$(ProjectDir)..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll')" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

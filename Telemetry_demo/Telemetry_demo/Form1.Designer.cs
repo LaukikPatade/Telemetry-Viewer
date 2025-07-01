@@ -30,12 +30,14 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnWifi = new System.Windows.Forms.Button();
-            this.btnUART = new System.Windows.Forms.Button();
+            this.btnSettings = new System.Windows.Forms.Button();
+            this.btnPlot = new System.Windows.Forms.Button();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.btnCollapseSidebar = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.panelMain = new System.Windows.Forms.Panel();
-            this.btnCollapseSidebar = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -57,10 +59,11 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.btnWifi, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.btnUART, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnSettings, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.btnPlot, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.btnConnect, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 35);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
@@ -71,39 +74,73 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(150, 150);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // btnWifi
+            // btnSettings
             // 
-            this.btnWifi.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnWifi.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnWifi.FlatAppearance.BorderSize = 0;
-            this.btnWifi.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnWifi.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWifi.ForeColor = System.Drawing.Color.White;
-            this.btnWifi.Location = new System.Drawing.Point(12, 51);
-            this.btnWifi.Margin = new System.Windows.Forms.Padding(2);
-            this.btnWifi.Name = "btnWifi";
-            this.btnWifi.Size = new System.Drawing.Size(126, 45);
-            this.btnWifi.TabIndex = 1;
-            this.btnWifi.Text = "📊 Plot";
-            this.btnWifi.UseVisualStyleBackColor = false;
-            this.btnWifi.Click += new System.EventHandler(this.btnWifi_Click);
+            this.btnSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSettings.FlatAppearance.BorderSize = 0;
+            this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSettings.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSettings.ForeColor = System.Drawing.Color.White;
+            this.btnSettings.Location = new System.Drawing.Point(12, 98);
+            this.btnSettings.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(126, 40);
+            this.btnSettings.TabIndex = 2;
+            this.btnSettings.Text = "⚙️ Settings";
+            this.btnSettings.UseVisualStyleBackColor = false;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
-            // btnUART
+            // btnPlot
             // 
-            this.btnUART.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnUART.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnUART.FlatAppearance.BorderSize = 0;
-            this.btnUART.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUART.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUART.ForeColor = System.Drawing.Color.White;
-            this.btnUART.Location = new System.Drawing.Point(12, 2);
-            this.btnUART.Margin = new System.Windows.Forms.Padding(2);
-            this.btnUART.Name = "btnUART";
-            this.btnUART.Size = new System.Drawing.Size(126, 45);
-            this.btnUART.TabIndex = 0;
-            this.btnUART.Text = "🔌 Connect";
-            this.btnUART.UseVisualStyleBackColor = false;
-            this.btnUART.Click += new System.EventHandler(this.btnUART_Click);
+            this.btnPlot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnPlot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnPlot.FlatAppearance.BorderSize = 0;
+            this.btnPlot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPlot.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlot.ForeColor = System.Drawing.Color.White;
+            this.btnPlot.Location = new System.Drawing.Point(12, 55);
+            this.btnPlot.Margin = new System.Windows.Forms.Padding(2);
+            this.btnPlot.Name = "btnPlot";
+            this.btnPlot.Size = new System.Drawing.Size(126, 39);
+            this.btnPlot.TabIndex = 1;
+            this.btnPlot.Text = "📊 Plot";
+            this.btnPlot.UseVisualStyleBackColor = false;
+            this.btnPlot.Click += new System.EventHandler(this.btnWifi_Click);
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnConnect.FlatAppearance.BorderSize = 0;
+            this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnConnect.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnConnect.ForeColor = System.Drawing.Color.White;
+            this.btnConnect.Location = new System.Drawing.Point(12, 12);
+            this.btnConnect.Margin = new System.Windows.Forms.Padding(2);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(126, 39);
+            this.btnConnect.TabIndex = 0;
+            this.btnConnect.Text = "🔌 Connect";
+            this.btnConnect.UseVisualStyleBackColor = false;
+            this.btnConnect.Click += new System.EventHandler(this.btnUART_Click);
+            // 
+            // btnCollapseSidebar
+            // 
+            this.btnCollapseSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            this.btnCollapseSidebar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnCollapseSidebar.FlatAppearance.BorderSize = 0;
+            this.btnCollapseSidebar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCollapseSidebar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapseSidebar.ForeColor = System.Drawing.Color.White;
+            this.btnCollapseSidebar.Location = new System.Drawing.Point(0, 0);
+            this.btnCollapseSidebar.Name = "btnCollapseSidebar";
+            this.btnCollapseSidebar.Size = new System.Drawing.Size(150, 35);
+            this.btnCollapseSidebar.TabIndex = 1;
+            this.btnCollapseSidebar.Text = "☰";
+            this.btnCollapseSidebar.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCollapseSidebar.UseVisualStyleBackColor = false;
+            this.btnCollapseSidebar.Click += new System.EventHandler(this.btnCollapseSidebar_Click);
             // 
             // panel2
             // 
@@ -140,21 +177,11 @@
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(466, 446);
             this.panelMain.TabIndex = 2;
-            this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
+            this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint_1);
             // 
-            // btnCollapseSidebar
+            // openFileDialog1
             // 
-            this.btnCollapseSidebar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnCollapseSidebar.FlatAppearance.BorderSize = 0;
-            this.btnCollapseSidebar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCollapseSidebar.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCollapseSidebar.ForeColor = System.Drawing.Color.White;
-            this.btnCollapseSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            this.btnCollapseSidebar.Size = new System.Drawing.Size(150, 35);
-            this.btnCollapseSidebar.Text = "☰";
-            this.btnCollapseSidebar.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCollapseSidebar.UseVisualStyleBackColor = false;
-            this.btnCollapseSidebar.Click += new System.EventHandler(this.btnCollapseSidebar_Click);
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // Telemetry
             // 
@@ -175,6 +202,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -184,9 +212,11 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Button btnUART;
-        private System.Windows.Forms.Button btnWifi;
+        private System.Windows.Forms.Button btnConnect;
+        private System.Windows.Forms.Button btnPlot;
         private System.Windows.Forms.Button btnCollapseSidebar;
+        private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

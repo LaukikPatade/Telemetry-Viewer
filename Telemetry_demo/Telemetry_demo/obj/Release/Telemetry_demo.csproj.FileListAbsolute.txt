@@ -8,6 +8,7 @@ C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\T
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.Properties.Resources.resources
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.UserControl1.resources
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.UserControl3.resources
+C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.SettingsPage.resources
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.csproj.GenerateResource.cache
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetry_demo.csproj.CoreCompileInputs.cache
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Release\Telemetr.4B24A4F4.Up2Date

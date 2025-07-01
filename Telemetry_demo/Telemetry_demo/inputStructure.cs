@@ -6,22 +6,27 @@ using System.Threading.Tasks;
 
 namespace Telemetry_demo
 {
+    public class ChannelInfo
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+    }
+
     internal class inputStructure
     {
-        public List <String> Channels { get; set; }
+        public List<ChannelInfo> Channels { get; set; }
 
         public inputStructure()
         {
-            Channels=new List<String>();
+            Channels = new List<ChannelInfo>();
         }
 
-        public void AddColumn(string channel)
+        public void AddColumn(ChannelInfo channel)
         {
-            if (!string.IsNullOrWhiteSpace(channel))
+            if (channel != null && !string.IsNullOrWhiteSpace(channel.Name))
             {
                 Channels.Add(channel);
             }
         }
-        
     }
 }

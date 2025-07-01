@@ -10,7 +10,7 @@ namespace Telemetry_demo
     internal class ConfigManager
     {
 
-        private static string configPath = "C:\\LAUKIK\\Telemetry\\Telemetry-Viewer\\Telemetry_demo\\config.json";
+        private static string configPath = "";
         public ConfigManager() { }
 
         public static void SaveConfig(InputConfig config)
@@ -31,7 +31,32 @@ namespace Telemetry_demo
             File.WriteAllText(configPath, jsonData);
         }
 
+        public static void SetConfigPath()
+        {
+            string dirPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "TelemetryViewer",
+                "configs"
+            );
+            // Ensure the directory exists
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
 
+            string configPath_ = Path.Combine(dirPath, "config.json");
+     
+
+            // Ensure the file exists
+            if (!File.Exists(configPath_))
+            {
+                // Create an empty JSON array as the initial content
+                File.WriteAllText(configPath_, "[]");
+            }
+
+            // If you want to store this path in a class variable, do so here
+            configPath = configPath_;
+        }
         public static List<InputConfig> LoadConfigs()
         {
             if (File.Exists(configPath) && new FileInfo(configPath).Length > 0)

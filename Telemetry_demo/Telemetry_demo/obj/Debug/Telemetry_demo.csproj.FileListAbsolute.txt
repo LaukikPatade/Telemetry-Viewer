@@ -43,3 +43,4 @@ E:\NCAIR\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo
 E:\NCAIR\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.pdb
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.exe.config
 C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetr.4B24A4F4.Up2Date
+C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\obj\Debug\Telemetry_demo.SettingsPage.resources
