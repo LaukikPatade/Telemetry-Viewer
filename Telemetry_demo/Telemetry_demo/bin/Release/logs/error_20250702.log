@@ -1,0 +1,7 @@
+[2025-07-02 12:06:01] ERROR: Failed to open serial port COM8
+Error: The port 'COM8' does not exist.
+Stack Trace:    at System.IO.Ports.InternalResources.WinIOError(Int32 errorCode, String str)
+   at System.IO.Ports.SerialStream..ctor(String portName, Int32 baudRate, Parity parity, Int32 dataBits, StopBits stopBits, Int32 readTimeout, Int32 writeTimeout, Handshake handshake, Boolean dtrEnable, Boolean rtsEnable, Boolean discardNull, Byte parityReplace)
+   at System.IO.Ports.SerialPort.Open()
+   at Telemetry_demo.UserControl3.CollectUARTData(InputConfig config, List`1 channels, Dictionary`2 channelSeries, Panel panel, Chart chart, Dictionary`2 allChannelData, Dictionary`2 channelCheckBoxes) in C:\LAUKIK\Telemetry\Telemetry-Viewer\Telemetry_demo\Telemetry_demo\Plotting Page.cs:line 1025
+
