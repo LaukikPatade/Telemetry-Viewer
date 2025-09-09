@@ -1,0 +1,144 @@
+[
+  {
+    "ConnectionName": "TestUDP",
+    "ConnectionType": "UDP",
+    "ComPort": null,
+    "UdpPort": "8080",
+    "BaudRate": "1500000",
+    "Mode": "Binary Mode",
+    "SyncByte": "AA",
+    "Channels": [
+      {
+        "Name": "Ax",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Ay",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Az",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Gx",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Gy",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Gz",
+        "Length": "int16",
+        "Color": {
+          "A": 0,
+          "R": 0,
+          "G": 0,
+          "B": 0
+        }
+      }
+    ]
+  },
+  {
+    "ConnectionName": "TestUART",
+    "ConnectionType": "UART",
+    "ComPort": "/dev/cu.usbserial-0001",
+    "UdpPort": null,
+    "BaudRate": "115200",
+    "Mode": "Binary Mode",
+    "SyncByte": "AA",
+    "Channels": [
+      {
+        "Name": "Ax",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 0,
+          "G": 0,
+          "B": 255
+        }
+      },
+      {
+        "Name": "Ay",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 255,
+          "G": 0,
+          "B": 0
+        }
+      },
+      {
+        "Name": "Az",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 0,
+          "G": 0,
+          "B": 255
+        }
+      },
+      {
+        "Name": "Gx",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 0,
+          "G": 0,
+          "B": 255
+        }
+      },
+      {
+        "Name": "Gy",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 0,
+          "G": 0,
+          "B": 255
+        }
+      },
+      {
+        "Name": "Gz",
+        "Length": "int16",
+        "Color": {
+          "A": 255,
+          "R": 0,
+          "G": 0,
+          "B": 255
+        }
+      }
+    ]
+  }
+]

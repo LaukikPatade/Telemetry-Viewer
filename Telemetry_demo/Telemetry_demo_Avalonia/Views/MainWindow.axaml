@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Telemetry_demo_Avalonia.ViewModels"
+        xmlns:local="clr-namespace:Telemetry_demo_Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Telemetry_demo_Avalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Telemetry Demo">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="Button.SidebarButton">
+            <Setter Property="Background" Value="#4F8EF7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10,10,10,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,10"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style Selector="Button.SidebarButton:pointerover">
+            <Setter Property="Background" Value="#6EA8FE"/>
+        </Style>
+        <Style Selector="Button.SidebarButton:pressed">
+            <Setter Property="Background" Value="#3762A0"/>
+        </Style>
+        <Style Selector="Border.TitleBar">
+            <Setter Property="Background" Value="#23272F"/>
+            <Setter Property="Height" Value="44"/>
+        </Style>
+        <Style Selector="TextBlock.TitleText">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid Background="#F5F6FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Custom Title Bar -->
+        <Border Grid.Row="0" Grid.ColumnSpan="1" Classes="TitleBar">
+            <DockPanel VerticalAlignment="Center" Margin="8,0">
+                <TextBlock Text="Telemetry Demo" Classes="TitleText" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Header Tabs for Navigation -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Background="#E0E7EF" Height="48" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" Spacing="8">
+            <Button Content="Input" Command="{Binding ShowInputPageCommand}" Margin="8,0" Padding="16,8" FontWeight="Bold" FontSize="16" Background="#4F8EF7" Foreground="White"/>
+            <Button Content="Plotting" Command="{Binding ShowPlottingPageCommand}" Margin="8,0" Padding="16,8" FontWeight="Bold" FontSize="16" Background="#4F8EF7" Foreground="White"/>
+            <Button Content="Settings" Command="{Binding ShowSettingsPageCommand}" Margin="8,0" Padding="16,8" FontWeight="Bold" FontSize="16" Background="#4F8EF7" Foreground="White"/>
+        </StackPanel>
+
+        <!-- Main Content Area -->
+        <Border Grid.Row="2" Grid.Column="0" Background="#F5F6FA" CornerRadius="8" Padding="16">
+            <ContentControl Content="{Binding CurrentPage}"/>
+        </Border>
+    </Grid>
+</Window>

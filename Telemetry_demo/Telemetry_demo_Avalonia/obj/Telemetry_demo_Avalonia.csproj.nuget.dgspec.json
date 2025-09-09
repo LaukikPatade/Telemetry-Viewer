@@ -1,0 +1,143 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/laukikpatade/NCAIR/Telemetry-Viewer/Telemetry_demo/Telemetry_demo_Avalonia/Telemetry_demo_Avalonia.csproj": {}
+  },
+  "projects": {
+    "/Users/laukikpatade/NCAIR/Telemetry-Viewer/Telemetry_demo/Telemetry_demo_Avalonia/Telemetry_demo_Avalonia.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/laukikpatade/NCAIR/Telemetry-Viewer/Telemetry_demo/Telemetry_demo_Avalonia/Telemetry_demo_Avalonia.csproj",
+        "projectName": "Telemetry_demo_Avalonia",
+        "projectPath": "/Users/laukikpatade/NCAIR/Telemetry-Viewer/Telemetry_demo/Telemetry_demo_Avalonia/Telemetry_demo_Avalonia.csproj",
+        "packagesPath": "/Users/laukikpatade/.nuget/packages/",
+        "outputPath": "/Users/laukikpatade/NCAIR/Telemetry-Viewer/Telemetry_demo/Telemetry_demo_Avalonia/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/laukikpatade/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/opt/homebrew/Cellar/dotnet/9.0.5/libexec/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Avalonia": {
+              "target": "Package",
+              "version": "[11.3.2, )"
+            },
+            "Avalonia.Controls.ColorPicker": {
+              "target": "Package",
+              "version": "[11.3.2, )"
+            },
+            "Avalonia.Controls.DataGrid": {
+              "target": "Package",
+              "version": "[11.3.2, )"
+            },
+            "Avalonia.Desktop": {
+              "target": "Package",
+              "version": "[11.3.2, )"
+            },
+            "Avalonia.Diagnostics": {
+              "include": "None",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
+            "Avalonia.Fonts.Inter": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
+            "Avalonia.ReactiveUI": {
+              "target": "Package",
+              "version": "[11.3.2, )"
+            },
+            "Avalonia.Themes.Fluent": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.2.1, )"
+            },
+            "LiveChartsCore.SkiaSharpView.Avalonia": {
+              "target": "Package",
+              "version": "[2.0.0-rc5.4, )"
+            },
+            "MessageBox.Avalonia": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "OxyPlot.Avalonia": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "System.IO.Ports": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[9.0.5, 9.0.5]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[9.0.5, 9.0.5]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[9.0.5, 9.0.5]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/opt/homebrew/Cellar/dotnet/9.0.5/libexec/sdk/9.0.106/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

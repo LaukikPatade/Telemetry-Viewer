@@ -1,0 +1,123 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avalonia="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             xmlns:colorpicker="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.ColorPicker"
+             x:Class="Telemetry_demo_Avalonia.Views.InputPageView">
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#23272F"/>
+        </Style>
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Background" Value="#FFF"/>
+            <Setter Property="Foreground" Value="#23272F"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="BorderBrush" Value="Red"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:nth-child(2n)">
+            <Setter Property="Background" Value="#E0E7EF"/>
+        </Style>
+        <Style Selector="Button.add-channel">
+            <Setter Property="Background" Value="#22C55E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderBrush" Value="#22C55E"/>
+        </Style>
+        <Style Selector="Button.add-channel:pointerover">
+            <Setter Property="Background" Value="#16A34A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.add-channel:pressed">
+            <Setter Property="Background" Value="#15803D"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+    <Border Background="#FFF" CornerRadius="8" Padding="24" Margin="16">
+        <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,*">
+            <!-- Left: Inputs (top: basic, bottom: channels) -->
+            <StackPanel Grid.Column="0" Grid.Row="0" Spacing="24">
+                <!-- Basic Inputs -->
+                <Grid ColumnDefinitions="Auto,12,180" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Text="Connection Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="0" Grid.Column="2" Width="180" Text="{Binding ConnectionName, Mode=TwoWay}"/>
+                    <TextBlock Text="Connection Type:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="1" Grid.Column="2" Width="180" ItemsSource="{Binding ConnectionTypes}" SelectedItem="{Binding SelectedConnectionType, Mode=TwoWay}"/>
+                    <TextBlock Text="COM Port:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsVisible="{Binding IsUART}"/>
+                    <ComboBox Grid.Row="2" Grid.Column="2" Width="180" ItemsSource="{Binding ComPorts}" SelectedItem="{Binding SelectedComPort, Mode=TwoWay}" IsVisible="{Binding IsUART}"/>
+                    <TextBlock Text="UDP Port:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" IsVisible="{Binding IsUDP}"/>
+                    <TextBox Grid.Row="3" Grid.Column="2" Width="180" Text="{Binding UdpPort, Mode=TwoWay}" IsVisible="{Binding IsUDP}"/>
+                    <TextBlock Text="Baud Rate:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="4" Grid.Column="2" Width="180" ItemsSource="{Binding BaudRates}" SelectedItem="{Binding BaudRate, Mode=TwoWay}" />
+                    <TextBlock Text="Custom Baud Rate:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" IsVisible="{Binding IsCustomBaudRate}"/>
+                    <TextBox Grid.Row="5" Grid.Column="2" Width="180" Text="{Binding CustomBaudRate, Mode=TwoWay}" IsVisible="{Binding IsCustomBaudRate}"/>
+                    <TextBlock Text="Mode:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="6" Grid.Column="2" Width="180" ItemsSource="{Binding Modes}" SelectedItem="{Binding SelectedMode, Mode=TwoWay}"/>
+                    <TextBlock Text="Sync Byte:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" IsVisible="{Binding IsBinaryMode}"/>
+                    <TextBox Grid.Row="7" Grid.Column="2" Width="180" Text="{Binding SyncByte, Mode=TwoWay}" IsVisible="{Binding IsBinaryMode}"/>
+                    <Button Content="Save Connection" Grid.Row="8" Grid.Column="2" Width="180" Margin="0,16,0,0"/>
+                </Grid>
+                <!-- Channel Inputs (below basic inputs) -->
+                <Border BorderBrush="#4F8EF7" BorderThickness="2" CornerRadius="10" Margin="0,24,0,0" Background="#F8FAFC" Padding="16"
+                        BoxShadow="0 4 16 0 #22000000">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,8" Spacing="16">
+                            <Border CornerRadius="6" Background="#4F8EF7">
+                                <TextBlock Text="Channel Name" Width="120" FontWeight="Bold" Foreground="White" Padding="8,4"/>
+                            </Border>
+                            <Border CornerRadius="6" Background="#4F8EF7">
+                                <TextBlock Text="Channel Length" Width="120" FontWeight="Bold" Foreground="White" Padding="8,4"/>
+                            </Border>
+                            <Border CornerRadius="6" Background="#4F8EF7">
+                                <TextBlock Text="Color" Width="120" FontWeight="Bold" Foreground="White" Padding="8,4"/>
+                            </Border>
+                            <Button Classes="add-channel" Content="+ Add Channel" Width="130" Margin="16,0,0,0" HorizontalAlignment="Right" Command="{Binding AddChannelCommand}"/>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Channels}" Margin="0,0,0,0" Height="300" BorderThickness="0" Background="#F8FAFC">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="16">
+                                        <TextBox Text="{Binding Name, Mode=TwoWay}" Width="120"/>
+                                        <ComboBox ItemsSource="{Binding DataContext.ChannelLengths, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  SelectedItem="{Binding Length, Mode=TwoWay}" Width="120"/>
+                                        <Border Background="White" BorderBrush="#4F8EF7" BorderThickness="1" CornerRadius="6" Padding="2">
+                                            <colorpicker:ColorPicker Color="{Binding Color, Mode=TwoWay}" Width="110" Height="28"/>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <Button Content="Save Input Config" Command="{Binding SaveInputConfigCommand}" Width="180" Margin="0,16,0,0" HorizontalAlignment="Right" Background="#4F8EF7" Foreground="White" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            <!-- Right: Saved Configs -->
+            <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" BorderBrush="#4F8EF7" BorderThickness="2" CornerRadius="10" Margin="24,0,0,0" Background="#F8FAFC" Padding="24"
+                    BoxShadow="0 4 16 0 #22000000">
+                <StackPanel>
+                    <TextBlock Text="Saved Configurations" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+                    <ListBox ItemsSource="{Binding SavedConfigs}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBlock Text="{Binding ConnectionName}" FontWeight="Bold" Width="120"/>
+                                    <TextBlock Text="{Binding ConnectionType}" Width="60"/>
+                                    <TextBlock Text="{Binding ComPort}" Width="100"/>
+                                    <TextBlock Text="{Binding BaudRate}" Width="80"/>
+                                    <TextBlock Text="{Binding Mode}" Width="80"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl> 
